@@ -1,12 +1,21 @@
-import express from 'express';
-import cors from 'cors';
-import webhook from '../routes/webhook';
-import config from '../config';
+const express = require('express');
+const cors = require('cors');
+const webhook = require('../routes/webhook');
+const config = require('../config');
 
 const expressLoader = async (app) => {
+    // Middleware that transforms the raw string of req.body into json
+    app.use(
+        express.json({
+            verify(req, res, buf) {
+                req.rawBody = buf;
+            },
+        })
+    );
+    app.use(express.urlencoded({ extended: false }));
+
+    // Enable Cross Origin Resource Sharing to all origins by default
     app.use(cors());
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
 
     // Load API routes
     app.use('/webhook', webhook);
@@ -17,10 +26,12 @@ const expressLoader = async (app) => {
     });
 
     // Store port in Express settings
-    app.set('port', process.env.PORT || 5000);
+    app.set('port', config.PORT || 5000);
 
     app.listen(app.get('port'), () => {
         console.log(`v${config.VERSION} running on port ${app.get('port')}`);
     });
     
 }
+
+module.exports = expressLoader;

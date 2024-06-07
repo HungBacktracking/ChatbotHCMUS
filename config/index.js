@@ -39,6 +39,9 @@ const config = {
     // Maintenance mode
     MAINTENANCE: parseEnvBoolean('MAINTENANCE') || false,
 
+    // Port
+    PORT: parseEnvNumber('PORT') || 5000,
+
     // Graph API
     GRAPH_API: parseEnvString('GRAPH_API') || 'https://graph.facebook.com/v7.0',
 

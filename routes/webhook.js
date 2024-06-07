@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import verifyXHub from '../middleware/xhub';
-import config from '../../config';
+const { Router } = require('express');
+const verifyXHub = require('../middleware/xhub');
+const config = require('../config');
 
 const router = Router();
 
@@ -46,4 +46,4 @@ const sendTextMessage = async (senderId, text) => {
 
 }
 
-export default router;
+module.exports = router;
