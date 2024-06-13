@@ -1,6 +1,6 @@
-import config from '../config';
+const config = require('../config');
 
-export default {
+module.exports = {
   MAINTENANCE: '[BOT] Server hiện đang bảo trì...',
 
   FIRST_COME: '[BOT] Chào mừng bạn đến với ' + config.APP_DISPLAY_NAME + '. Trước khi bắt đầu, hãy chắc chắn rằng bạn đã chọn đúng giới tính người muốn chat cùng.\n\nẤn trợ giúp (hoặc gửi trogiup) để xem thêm.',

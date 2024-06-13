@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const verifyXHub = require('../middleware/xhub');
 const config = require('../config');
+const Chatbot = require('../services/Chatbot');
 
 const router = Router();
 
@@ -30,20 +31,10 @@ router.post('/', verifyXHub, (req, res) => {
     for (var entry of entries) {
 
         var messaging = entry.messaging;
-        for (var message of messaging) {
-            var senderId = message.sender.id;
-            if (message.message) {
-                if (message.message.text) {
-                    var text = message.message.text;
-                    console.log(`Received message from ${senderId}: ${text}`);
-                }
-            }
+        for (var event of messaging) {
+            Chatbot.processEvent(event);
         }
     }
 });
-
-const sendTextMessage = async (senderId, text) => {
-
-}
 
 module.exports = router;
