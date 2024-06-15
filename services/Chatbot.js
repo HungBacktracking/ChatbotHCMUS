@@ -1,7 +1,10 @@
 const config = require('../config');
 const lang = require('../lang');
 const fb = require('../utils/facebook');
-
+const db = require('../database');
+const gifts = require('../utils/gifts');
+const chatbotUtils = require('../utils/ChatbotUtils');
+const GenderEnum = require('../models/GenderEnum');
 
 
 /**
@@ -48,7 +51,93 @@ const processEvent = async (event) => {
         await fb.sendTextButtons(sender, lang.FIRST_COME, true, false, true, true, false);
         return;
     }
+    console.log('Received command:', command, sender);
+    console.log('hello');
+  
+    // fetch person state
+    const waitState = await db.isInWaitRoom(sender);
+    console.log('Received command hihi:', command);
+    const sender2 = await db.findPartnerChatRoom(sender);
+    console.log('Received command 0:', command + sender2);
+    if (!waitState && sender2 === null) {
+        console.log('Received command 1:', command);
+        // neither in chat room nor wait room
+        if (command === lang.KEYWORD_START) {
+            const gender = await chatbotUtils.getGender(sender);
+            await chatbotUtils.findPair(sender, gender);
+        } else if (command.startsWith(lang.KEYWORD_GENDER)) {
+            const gender = chatbotUtils.parseGender(command);
+            if (gender === null) {
+                await fb.sendTextButtons(sender, lang.GENDER_ERR, false, false, true, true, false);
+            } else {
+                let genderString = '';
+                if (gender === GenderEnum.MALE) {
+                    genderString = lang.GENDER_ARR_FEMALE;
+                } else if (gender === GenderEnum.FEMALE) {
+                    genderString = lang.GENDER_ARR_MALE;
+                }
+        
+                if (gender !== GenderEnum.UNKNOWN) {
+                    await fb.sendTextMessage('', sender, lang.GENDER_WRITE_OK + genderString + lang.GENDER_WRITE_WARN, false);
+                }
+        
+                await db.setGender(sender, gender);
+                await chatbotUtils.findPair(sender, gender);
+            }
+        } else if (command === lang.KEYWORD_HELP) {
+            await fb.sendTextButtons(sender, lang.HELP_TXT, true, false, true, true, false);
+        } else if (command === lang.KEYWORD_CAT) {
+            await gifts.sendCatPic(sender, null);
+        } else if (command === lang.KEYWORD_DOG) {
+            await gifts.sendDogPic(sender, null);
+        } else if (!event.read) {
+            await fb.sendTextButtons(sender, lang.INSTRUCTION, true, false, true, true, false);
+        }
+    } else if (waitState && sender2 === null) {
+        // in wait room and waiting
+        if (command === lang.KEYWORD_END) {
+            await db.removeFromWaitRoom(sender);
+            await fb.sendTextButtons(sender, lang.END_CHAT, true, false, true, true, false);
+        } else if (command === lang.KEYWORD_HELP) {
+            await fb.sendTextButtons(sender, lang.HELP_TXT, false, false, true, false, false);
+        } else if (command === lang.KEYWORD_CAT) {
+            await gifts.sendCatPic(sender, null);
+        } else if (command === lang.KEYWORD_DOG) {
+            await gifts.sendDogPic(sender, null);
+        } else if (!event.read) {
+            await fb.sendTextButtons(sender, lang.WAITING, false, false, true, false, false);
+        }
+    } else if (!waitState && sender2 !== null) {
+        // in chat room
+        if (command === lang.KEYWORD_END) {
+            await chatbotUtils.processEndChat(sender, sender2);
+        } else if (command === lang.KEYWORD_START) {
+            await fb.sendTextMessage('', sender, lang.START_ERR_ALREADY, false);
+        } else if (command === lang.KEYWORD_HELP) {
+            await fb.sendTextButtons(sender, lang.HELP_TXT, false, true, true, false, false);
+        } else if (command === lang.KEYWORD_CAT) {
+            await chatbotUtils.forwardMessage(sender, sender2, event.message);
+            await gifts.sendCatPic(sender, sender2);
+        } else if (command === lang.KEYWORD_DOG) {
+            await chatbotUtils.forwardMessage(sender, sender2, event.message);
+            await gifts.sendDogPic(sender, sender2);
+        } else {
+            // FIX-ME: Only send seen indicator for messages before watermark
+            if (event.read) {
+                await fb.sendSeenIndicator(sender2);
+            } else if (text.trim().toLowerCase().startsWith('[bot]')) {
+                await fb.sendTextMessage('', sender, lang.ERR_FAKE_MSG, false);
+            } else {
+                await chatbotUtils.forwardMessage(sender, sender2, event.message);
+            }
+        }
+    } else {
+        await db.removeFromWaitRoom(sender);
+        await db.removeFromChatRoom(sender);
+        await fb.sendTextMessage('', sender, lang.ERR_UNKNOWN, false);
+    }
 };
+
 
 module.exports = { processEvent };
   

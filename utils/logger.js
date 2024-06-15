@@ -4,7 +4,7 @@
  */
 
 const config = require('../config');
-const fb = require('../utils/facebook');
+// const fb = require('../utils/facebook');
 const phin = require('phin');
 
 /**
@@ -25,7 +25,7 @@ const logError = (source, message, err = null, sendToDev = false) => {
 
     // send message to dev
     if (sendToDev) {
-        fb.sendTextMessage('', config.DEV_ID, message, false);
+        // fb.sendTextMessage('', config.DEV_ID, message, false);
     }
 };
 
