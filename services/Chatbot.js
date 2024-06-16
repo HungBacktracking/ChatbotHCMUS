@@ -51,16 +51,13 @@ const processEvent = async (event) => {
         await fb.sendTextButtons(sender, lang.FIRST_COME, true, false, true, true, false);
         return;
     }
-    console.log('Received command:', command, sender);
-    console.log('hello');
+
   
     // fetch person state
     const waitState = await db.isInWaitRoom(sender);
-    console.log('Received command hihi:', command);
     const sender2 = await db.findPartnerChatRoom(sender);
-    console.log('Received command 0:', command + sender2);
+    
     if (!waitState && sender2 === null) {
-        console.log('Received command 1:', command);
         // neither in chat room nor wait room
         if (command === lang.KEYWORD_START) {
             const gender = await chatbotUtils.getGender(sender);

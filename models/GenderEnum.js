@@ -4,4 +4,4 @@ const GenderEnum = {
   FEMALE: 'FEMALE',
 }
 
-module.export = GenderEnum;
+module.exports = GenderEnum;
