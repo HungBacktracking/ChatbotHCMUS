@@ -185,7 +185,6 @@ const setMessengerProfile = async () => {
  * @param origSender - ID of original sender (see code for better understanding)
  */
 const sendMessage = async (receiver, messageData, usePersona, origSender = '') => {
-    console.log('Đang gửi đây', origSender);
     if (messageData.text || messageData.attachment) {
         if (messageData.text && messageData.text.length > config.MAX_MESSAGE_LENGTH) {
             if (origSender !== '') {

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const webhook = require('../routes/webhook');
+const admin = require('../routes/admin_route');
+const webhook = require('../routes/webhook_route');
 const config = require('../config');
 
 const expressLoader = async (app) => {
@@ -18,6 +19,7 @@ const expressLoader = async (app) => {
     app.use(cors());
 
     // Load API routes
+    app.use('/admin', admin);
     app.use('/webhook', webhook);
 
     // Show status
