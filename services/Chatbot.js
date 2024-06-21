@@ -43,11 +43,7 @@ const processEvent = async (event) => {
         text = event.message.text;
     }
   
-    let command = '';
-    if (text.length < 20) {
-        command = text.toLowerCase().replace(/ /g, '');
-    }
-  
+    let command = text.toLowerCase();
     if (command === 'ʬ') {
         await fb.sendTextButtons(sender, lang.FIRST_COME, true, false, true, true, false);
         return;
