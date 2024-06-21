@@ -73,6 +73,9 @@ const config = {
     // URI to MongoDB server
     MONGO_URI: parseEnvString('MONGO_URI') || '',
 
+    // Gemini API key
+    GEMINI_API: parseEnvString('GEMINI_API') || '',
+
     // Logging stuffs
     HAS_POST_LOG: parseEnvBoolean('HAS_POST_LOG') || false,
     POST_LOG_ID: parseEnvString('POST_LOG_ID') || '',

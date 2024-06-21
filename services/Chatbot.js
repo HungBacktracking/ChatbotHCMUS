@@ -5,6 +5,7 @@ const db = require('../database');
 const gifts = require('../utils/gifts');
 const chatbotUtils = require('../utils/ChatbotUtils');
 const GenderEnum = require('../models/GenderEnum');
+const LLM = require('../services/llm_service');
 
 
 /**
@@ -88,7 +89,8 @@ const processEvent = async (event) => {
         } else if (command === lang.KEYWORD_DOG) {
             await gifts.sendDogPic(sender, null);
         } else if (!event.read) {
-            await fb.sendTextButtons(sender, lang.INSTRUCTION, true, false, true, true, false);
+            const responseLLM = await LLM.generateResponse(command);
+            await fb.sendTextMessage('', sender, responseLLM, false);
         }
     } else if (waitState && sender2 === null) {
         // in wait room and waiting
@@ -102,7 +104,8 @@ const processEvent = async (event) => {
         } else if (command === lang.KEYWORD_DOG) {
             await gifts.sendDogPic(sender, null);
         } else if (!event.read) {
-            await fb.sendTextButtons(sender, lang.WAITING, false, false, true, false, false);
+            const responseLLM = await LLM.generateResponse(command);
+            await fb.sendTextMessage('', sender, responseLLM, false);
         }
     } else if (!waitState && sender2 !== null) {
         // in chat room
