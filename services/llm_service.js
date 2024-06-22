@@ -22,6 +22,9 @@ const model = genAI.getGenerativeModel({ model: "gemini-pro"});
 //     best_of: 1, // generate multiple completions and return the best one
 // };
 
+
+// ref : https://github.com/devarshishimpi/google-gemini-nodejs-chatbot/blob/main/index.js 
+// ref : https://reetesh.in/blog/integrating-google-gemini-to-node.js-application
 // async function startConversation() {
 //     try {
 //         const chat = model.startChat({
