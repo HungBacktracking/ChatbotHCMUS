@@ -5,6 +5,7 @@ const logger = require('../utils/logger');
 const genAI = new GoogleGenerativeAI(config.GEMINI_API);
 const model = genAI.getGenerativeModel({ model: "gemini-pro"});
 
+// text: The text prompt to generate a response for
 
 const generateResponse = async (command) => {
     try {
