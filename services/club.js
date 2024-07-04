@@ -29,8 +29,10 @@ async function suggestClub(sender) {
                 },
             },
         };
-        // convert to UTF-8
-        const message = Buffer.from(templateMessageData, 'utf-8').toString();
+        
+        const messageString = JSON.stringify(templateMessageData);
+        const message = Buffer.from(messageString, 'utf8').toString();
+
         await fb.sendTextMessage('', sender, message, false);
     }
 }
