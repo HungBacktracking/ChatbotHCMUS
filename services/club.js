@@ -25,7 +25,7 @@ async function suggestClub(sender) {
             ],
         };
         
-        await fb.sendAttachment('', sender, 'template', payload);
+        await fb.sendAttachment('', sender, 'template', payload, false, false, false);
     }
 }
 
