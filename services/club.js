@@ -30,10 +30,7 @@ async function suggestClub(sender) {
             },
         };
         
-        const messageString = JSON.stringify(templateMessageData);
-        const message = Buffer.from(messageString, 'utf8').toString();
-
-        await fb.sendTextMessage('', sender, message, false);
+        await fb.sendAttachment('', sender, templateMessageData.attachment.type, templateMessageData.attachment.payload, false);
     }
 }
 
