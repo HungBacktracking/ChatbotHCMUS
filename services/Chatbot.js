@@ -101,6 +101,8 @@ const processEvent = async (event) => {
             await gifts.sendCatPic(sender, null);
         } else if (command === lang.KEYWORD_DOG) {
             await gifts.sendDogPic(sender, null);
+        } else if (command === lang.KEYWORD_CLUB) {
+            await club.suggestClub(sender);
         } else if (!event.read) {
             const responseLLM = await LLM.generateResponse(command);
             await fb.sendTextMessage('', sender, responseLLM, false);
@@ -119,6 +121,8 @@ const processEvent = async (event) => {
         } else if (command === lang.KEYWORD_DOG) {
             await chatbotUtils.forwardMessage(sender, sender2, event.message);
             await gifts.sendDogPic(sender, sender2);
+        } else if (command === lang.KEYWORD_CLUB) {
+            await club.suggestClub(sender);
         } else {
             // FIX-ME: Only send seen indicator for messages before watermark
             if (event.read) {

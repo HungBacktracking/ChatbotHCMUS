@@ -1,7 +1,7 @@
 const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
 const config = require('../config');
 const logger = require('../utils/logger'); 
-import { introduction_HCMUS } from '../database/HCMUS';
+const introduction_HCMUS = require('../database/HCMUS');
 
 const genAI = new GoogleGenerativeAI(config.GEMINI_API);
 const model = genAI.getGenerativeModel({ model: "gemini-pro"});
