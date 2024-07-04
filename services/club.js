@@ -24,7 +24,7 @@ async function fetchImageUrl(pageId, accessToken) {
     const url = `https://graph.facebook.com/v12.0/${pageId}/picture?type=large&redirect=false&access_token=${accessToken}`;
     try {
         const response = await axios.get(url);
-        return response.data.data.url; // Assuming the response has the image URL
+        return response.data.data.url;
     } catch (error) {
         console.error("Failed to fetch image URL", error);
         return null;
@@ -34,8 +34,8 @@ async function fetchImageUrl(pageId, accessToken) {
 async function suggestClub(sender) {
     const elements = await Promise.all(club.map(async club => {
         const pageUsername = club.link.split('https://www.facebook.com/')[1];
-        const pageId = await getPageId(pageUsername, config.PAGE_ACCESS_TOKEN);
-        const imageUrl = await fetchImageUrl(pageId, config.PAGE_ACCESS_TOKEN); 
+        const pageId = await getPageId(pageUsername, config.ACCESS_TOKEN_TEST_IMAGE);
+        const imageUrl = await fetchImageUrl(pageId, config.ACCESS_TOKEN_TEST_IMAGE); 
         return {
             title: club.name,
             subtitle: club.description,

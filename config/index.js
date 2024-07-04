@@ -104,6 +104,9 @@ const config = {
     // ID of developer's Facebook account
     DEV_ID: parseEnvString('DEV_ID') || '',
 
+    
+    ACCESS_TOKEN_TEST_IMAGE: parseEnvString('ACCESS_TOKEN_TEST_IMAGE') || '',
+
     // Project version.
     VERSION: '1.0.0',
 };
