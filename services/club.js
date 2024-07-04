@@ -8,29 +8,24 @@ const club = [
 
 async function suggestClub(sender) {
     for (let i = 0; i < club.length; i++) {
-        const templateMessageData = {
-            attachment: {
-                type: 'template',
-                payload: {
-                    template_type: 'generic',
-                    elements: [
+        const payload = {
+            template_type: 'generic',
+            elements: [
+                {
+                    title: club[i].name,
+                    subtitle: club[i].description,
+                    buttons: [
                         {
-                            title: club[i].name,
-                            subtitle: club[i].description,
-                            buttons: [
-                                {
-                                    type: 'web_url',
-                                    url: club[i].link,
-                                    title: 'Xem thêm',
-                                },
-                            ],
+                            type: 'web_url',
+                            url: club[i].link,
+                            title: 'Xem trên Facebook',
                         },
                     ],
                 },
-            },
+            ],
         };
         
-        await fb.sendAttachment('', sender, templateMessageData.attachment.type, templateMessageData.attachment.payload, false);
+        await fb.sendAttachment('', sender, 'template', payload);
     }
 }
 
