@@ -7,26 +7,45 @@ const club = [
 ];
 
 async function suggestClub(sender) {
-    for (let i = 0; i < club.length; i++) {
-        const payload = {
-            template_type: 'generic',
-            elements: [
+    // for (let i = 0; i < club.length; i++) {
+    //     const payload = {
+    //         template_type: 'generic',
+    //         elements: [
+    //             {
+    //                 title: club[i].name,
+    //                 subtitle: club[i].description,
+    //                 buttons: [
+    //                     {
+    //                         type: 'web_url',
+    //                         url: club[i].link,
+    //                         title: 'Xem trên Facebook',
+    //                     },
+    //                 ],
+    //             },
+    //         ],
+    //     };
+        
+    //     await fb.sendAttachment('', sender, 'template', payload, false, false, false);
+    // }
+    
+    const elements = club.map(club => { 
+        return {
+            title: club.name,
+            subtitle: club.description,
+            buttons: [
                 {
-                    title: club[i].name,
-                    subtitle: club[i].description,
-                    buttons: [
-                        {
-                            type: 'web_url',
-                            url: club[i].link,
-                            title: 'Xem trên Facebook',
-                        },
-                    ],
+                    type: 'web_url',
+                    url: club.link,
+                    title: 'Xem trên Facebook',
                 },
             ],
-        };
-        
-        await fb.sendAttachment('', sender, 'template', payload, false, false, false);
-    }
+        }
+    });
+    const payload = {
+        template_type: 'generic',
+        elements,
+    };
+    await fb.sendAttachment('', sender, 'template', payload, false, false, false);
 }
 
 module.exports = {
