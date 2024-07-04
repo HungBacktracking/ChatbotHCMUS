@@ -47,6 +47,7 @@ module.exports = {
   KEYWORD_HELP: 'trogiup',
   KEYWORD_CAT: 'meow',
   KEYWORD_DOG: 'gauw',
+  KEYWORD_CLUB: 'club',
 
   ERR_FAKE_MSG: '[BOT] Lỗi: Bạn không được giả mạo tin nhắn của bot!',
   ERR_DATABASE: '[BOT] Lỗi: Không thể kết nối với database. Hãy báo cho admin!',

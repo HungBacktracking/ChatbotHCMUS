@@ -84,6 +84,8 @@ const processEvent = async (event) => {
             await gifts.sendCatPic(sender, null);
         } else if (command === lang.KEYWORD_DOG) {
             await gifts.sendDogPic(sender, null);
+        } else if (command === lang.KEYWORD_CLUB) {
+            await club.suggestClub(sender);
         } else if (!event.read) {
             const responseLLM = await LLM.generateResponse(command);
             await fb.sendTextMessage('', sender, responseLLM, false);
