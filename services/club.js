@@ -1,5 +1,5 @@
 const fb = require('../utils/facebook');
-const config = require('./config');
+const config = require('../config');
 
 const axios = require('axios');
 
