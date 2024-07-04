@@ -7,9 +7,30 @@ const club = [
 ];
 
 async function suggestClub(sender) {
-    const randomClub = club[Math.floor(Math.random() * club.length)];
-    const message = `CLB bạn có thể tham gia: ${randomClub.name} - ${randomClub.description}.\nXem thêm tại: ${randomClub.link}`;
-    await fb.sendTextMessage('', sender, message, false);
+    for (let i = 0; i < club.length; i++) {
+        const templateMessageData = {
+            attachment: {
+                type: 'template',
+                payload: {
+                    template_type: 'generic',
+                    elements: [
+                        {
+                            title: club[i].name,
+                            subtitle: club[i].description,
+                            buttons: [
+                                {
+                                    type: 'web_url',
+                                    url: club[i].link,
+                                    title: 'Xem thêm',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            },
+        };
+    }
+    await fb.sendTextMessage('', sender, templateMessageData, false);
 }
 
 module.exports = {
