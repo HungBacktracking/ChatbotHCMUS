@@ -37,6 +37,11 @@ const persistent_menu = [
                 payload: lang.KEYWORD_GENDER + lang.KEYWORD_GENDER_FEMALE,
             },
             {
+                title: 'xem câu lạc bộ',
+                type: 'postback',
+                payload: lang.KEYWORD_CLUB,
+            },
+            {
                 title: 'kết thúc',
                 type: 'postback',
                 payload: lang.KEYWORD_END,
@@ -70,6 +75,11 @@ const quick_buttons_generic = [
         content_type: 'text',
         title: 'trợ giúp',
         payload: lang.KEYWORD_HELP,
+    },
+    {
+        content_type: 'text',
+        title: 'xem câu lạc bộ',
+        payload: lang.KEYWORD_CLUB,
     },
 ];
 
