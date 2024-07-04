@@ -286,6 +286,7 @@ const sendAttachment = async (
             payload: { url },
         },
     };
+    console.log('sendAttachment', message);
 
     if (showGenericButton || showGenderButton) {
         message.quick_replies = quick_replies;
