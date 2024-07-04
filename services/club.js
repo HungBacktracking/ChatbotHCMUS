@@ -1,4 +1,18 @@
 const fb = require('../utils/facebook');
+const config = require('./config');
+
+const axios = require('axios');
+
+async function getPageId(pageUsername, accessToken) {
+    const url = `https://graph.facebook.com/v12.0/${pageUsername}?fields=id&access_token=${accessToken}`;
+    try {
+        const response = await axios.get(url);
+        return response.data.id;
+    } catch (error) {
+        console.error("Error fetching Page ID:", error);
+        return null;
+    }
+}
 
 const club = [
     { name : "HCMUS Football Club", description: "Trang thông tin chính thức của CLB Bóng Đá Trường ĐH Khoa Học Tự Nhiên - ĐHQG HCM.", link: "https://www.facebook.com/HCMUSFC" },
@@ -6,32 +20,26 @@ const club = [
     
 ];
 
+async function fetchImageUrl(pageId, accessToken) {
+    const url = `https://graph.facebook.com/v12.0/${pageId}/picture?type=large&redirect=false&access_token=${accessToken}`;
+    try {
+        const response = await axios.get(url);
+        return response.data.data.url; // Assuming the response has the image URL
+    } catch (error) {
+        console.error("Failed to fetch image URL", error);
+        return null;
+    }
+}
+
 async function suggestClub(sender) {
-    // for (let i = 0; i < club.length; i++) {
-    //     const payload = {
-    //         template_type: 'generic',
-    //         elements: [
-    //             {
-    //                 title: club[i].name,
-    //                 subtitle: club[i].description,
-    //                 buttons: [
-    //                     {
-    //                         type: 'web_url',
-    //                         url: club[i].link,
-    //                         title: 'Xem trên Facebook',
-    //                     },
-    //                 ],
-    //             },
-    //         ],
-    //     };
-        
-    //     await fb.sendAttachment('', sender, 'template', payload, false, false, false);
-    // }
-    
-    const elements = club.map(club => { 
+    const elements = await Promise.all(club.map(async club => {
+        const pageUsername = club.link.split('https://www.facebook.com/')[1];
+        const pageId = await getPageId(pageUsername, config.PAGE_ACCESS_TOKEN);
+        const imageUrl = await fetchImageUrl(pageId, config.PAGE_ACCESS_TOKEN); 
         return {
             title: club.name,
             subtitle: club.description,
+            image_url: imageUrl,
             buttons: [
                 {
                     type: 'web_url',
@@ -40,7 +48,7 @@ async function suggestClub(sender) {
                 },
             ],
         }
-    });
+    }));
     const payload = {
         template_type: 'generic',
         elements,
