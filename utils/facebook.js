@@ -267,7 +267,7 @@ const sendAttachment = async (
     sender,
     receiver,
     type,
-    url,
+    payload,
     showGenericButton,
     showGenderButton,
     usePersona
@@ -283,7 +283,7 @@ const sendAttachment = async (
     const message = {
         attachment: {
             type,
-            payload: { url },
+            payload: payload,
         },
     };
     console.log('sendAttachment', message);
