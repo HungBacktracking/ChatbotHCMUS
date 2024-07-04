@@ -34,8 +34,8 @@ async function fetchImageUrl(pageId, accessToken) {
 async function suggestClub(sender) {
     const elements = await Promise.all(club.map(async club => {
         const pageUsername = club.link.split('https://www.facebook.com/')[1];
-        const pageId = await getPageId(pageUsername, config.ACCESS_TOKEN_TEST_IMAGE);
-        const imageUrl = await fetchImageUrl(pageId, config.ACCESS_TOKEN_TEST_IMAGE); 
+        const pageId = await getPageId(pageUsername, config.ACCESS_TOKEN);
+        const imageUrl = await fetchImageUrl(pageId, config.ACCESS_TOKEN); 
         return {
             title: club.name,
             subtitle: club.description,
