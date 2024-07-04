@@ -29,8 +29,8 @@ async function suggestClub(sender) {
                 },
             },
         };
+        await fb.sendTextMessage('', sender, templateMessageData, false);
     }
-    await fb.sendTextMessage('', sender, templateMessageData, false);
 }
 
 module.exports = {
