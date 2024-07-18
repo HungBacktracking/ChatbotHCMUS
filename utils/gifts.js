@@ -52,10 +52,10 @@ const getDogData = () => {
 const sendCatPic = async (id1, id2) => {
     const url = getCatData();
     if (id2 !== null) {
-        await fb.sendAttachment('', id1, 'image', url, true, false, false);
-        await fb.sendAttachment('', id2, 'image', url, true, false, true);
+        await fb.sendAttachment('', id1, 'image', {url: url}, true, false, false);
+        await fb.sendAttachment('', id2, 'image', {url: url}, true, false, true);
     } else {
-        await fb.sendAttachment('', id1, 'image', url, true, true, false);
+        await fb.sendAttachment('', id1, 'image', {url: url}, true, true, false);
     }
 };
 
@@ -67,10 +67,10 @@ const sendCatPic = async (id1, id2) => {
 const sendDogPic = async (id1, id2) => {
     const url = getDogData();
     if (id2 !== null) {
-        await fb.sendAttachment('', id1, 'image', url, true, false, false);
-        await fb.sendAttachment('', id2, 'image', url, true, false, true);
+        await fb.sendAttachment('', id1, 'image', {url: url}, true, false, false);
+        await fb.sendAttachment('', id2, 'image', {url: url}, true, false, true);
     } else {
-        await fb.sendAttachment('', id1, 'image', url, true, true, false);
+        await fb.sendAttachment('', id1, 'image', {url: url}, true, true, false);
     }
 };
 
