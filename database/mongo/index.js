@@ -6,7 +6,7 @@
 const { Mutex } = require('async-mutex');
 const ChatRoom = require('../../models/chatroom');
 const WaitRoom = require('../../models/waitroom');
-const Gender = require('../../models/user');
+const User = require('../../models/user');
 const LastPerson = require('../../models/lastperson');
 const GenderEnum = require('../../models/GenderEnum');
 const logger = require('../../utils/logger');
@@ -142,7 +142,7 @@ const resetDatabase = async () => {
     }
 
     try {
-        await Gender.deleteMany({});
+        await User.deleteMany({});
     } catch (err) {
         logger.logError('mongo::resetDatabase::gender', 'Failed to save data to MongoDB', err, true);
     }

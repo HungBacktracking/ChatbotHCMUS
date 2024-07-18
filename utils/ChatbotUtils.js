@@ -32,7 +32,7 @@ const parseGender = (genderString) => {
  * @returns Gender of user
  */
 const getGender = async (id) => {
-    let gender = await db.getGender(id);
+    let gender = await db.getUser(id).gender;
     if (gender) {
         return gender;
     }

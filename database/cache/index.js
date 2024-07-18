@@ -238,6 +238,7 @@ const userFind = async (id) => {
     const release = await userCacheMutex.acquire();
     try {
         ret = userCache.has(id) ? userCache.get(id) : null;
+        console.log('userFind', ret);
     } catch (err) {
         logger.logError('cache::genderFind', 'This should never happen', err, true);
     } finally {
