@@ -301,6 +301,7 @@ const lastPersonCheck = async (id1, id2) => {
     const release = await lastPersonCacheMutex.acquire();
     try {
         ret = lastPersonCache.has(id1) && lastPersonCache.get(id1) === id2;
+        console.log('lastPersonCheck', ret);
     } catch (err) {
         logger.logError('cache::lastPersonCheck', 'This should never happen', err, true);
     } finally {
