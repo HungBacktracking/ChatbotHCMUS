@@ -32,7 +32,7 @@ const readWaitRoom = async () => {
 const createBackup = async () => {
     const chatRoomList = await db.getListChatRoom();
     const waitRoomList = await db.getListWaitRoom();
-    const genderList = await db.getListGender();
+    const userList = await db.getListUser();
     const lastPersonList = await db.getListLastPerson();
 
     return {
@@ -40,7 +40,7 @@ const createBackup = async () => {
         error: false,
         chatRoom: chatRoomList,
         waitRoom: waitRoomList,
-        gender: genderList,
+        user: userList,
         lastPerson: lastPersonList,
     };
 };
@@ -58,8 +58,8 @@ const restoreBackup = async (data) => {
         return { success: false, error: true, errorType: 'Invalid wait room data' };
     }
 
-    if (!Array.isArray(data.gender)) {
-        return { success: false, error: true, errorType: 'Invalid gender data' };
+    if (!Array.isArray(data.user)) {
+        return { success: false, error: true, errorType: 'Invalid user data' };
     }
 
     if (!Array.isArray(data.lastPerson)) {
@@ -73,11 +73,11 @@ const restoreBackup = async (data) => {
     });
 
     data.waitRoom.forEach(async (entry) => {
-        await db.writeToWaitRoom(entry.id, entry.gender, entry.time);
+        await db.writeToWaitRoom(entry.id, entry.gender, entry.targetGender, entry.time);
     });
 
-    data.gender.forEach(async (entry) => {
-        await db.setGender(entry.id, entry.gender);
+    data.user.forEach(async (entry) => {
+        await db.setUser(entry.id, entry.gender, entry.chatHistory);
     });
 
     data.lastPerson.forEach(async (entry) => {

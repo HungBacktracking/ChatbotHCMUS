@@ -214,6 +214,7 @@ const chatRoomRead = async () => {
  * Save user in cache
  * @param id - ID of user
  * @param gender - Gender of user
+ * @param chatHistory - Chat history of user
  */
 const userWrite = async (id, gender, chatHistory) => {
     const entry = { gender, chatHistory };
@@ -301,7 +302,6 @@ const lastPersonCheck = async (id1, id2) => {
     const release = await lastPersonCacheMutex.acquire();
     try {
         ret = lastPersonCache.has(id1) && lastPersonCache.get(id1) === id2;
-        console.log('lastPersonCheck', ret);
     } catch (err) {
         logger.logError('cache::lastPersonCheck', 'This should never happen', err, true);
     } finally {

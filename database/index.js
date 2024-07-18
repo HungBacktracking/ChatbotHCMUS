@@ -55,6 +55,16 @@ const initCache = async () => {
  * @param id - ID of user
  * @param gender - Gender of user
  */
+const setUser = async (id, gender, chatHistory) => {
+    await Promise.all([cache.userWrite(id, gender, chatHistory), mongo.userWrite(id, gender)]);
+};
+
+
+/**
+ * Save user gender to database
+ * @param id - ID of user
+ * @param gender - Gender of user
+ */
 const setUserGender = async (id, gender) => {
     await Promise.all([cache.userGenderWrite(id, gender), mongo.userGenderWrite(id, gender)]);
 };
@@ -82,6 +92,7 @@ const getListUser = async () => {
  * Add user to wait room
  * @param id - ID of user
  * @param gender - Gender of user
+ * @param target - Target gender of user
  */
 const writeToWaitRoom = async (id, gender, targetGender, time = new Date()) => {
     await Promise.all([cache.waitRoomWrite(id, gender, targetGender, time), mongo.waitRoomWrite(id, gender, targetGender, time)]);
@@ -195,6 +206,7 @@ module.exports = {
     initCache,
 
     // User stuffs
+    setUser,
     setUserGender,
     getUser,
     getListUser,

@@ -23,6 +23,24 @@ const mongoMutex = new Mutex();
  * Save gender of user to database
  * @param id - ID of user
  * @param gender - Gender of user
+ * @param chatHistory - Chat history of user
+ */
+const userWrite = async (id, gender, chatHistory) => {
+    const release = await mongoMutex.acquire();
+    try {
+        await User.findOneAndUpdate({ id }, { $set: { gender, chatHistory } }, { upsert: true });
+    } catch (err) {
+        logger.logError('mongo::genderWrite', 'Failed to save data to MongoDB', err, true);
+    } finally {
+        release();
+    }
+};
+
+
+/**
+ * Save gender of user to database
+ * @param id - ID of user
+ * @param gender - Gender of user
  */
 const userGenderWrite = async (id, gender) => {
     const release = await mongoMutex.acquire();
@@ -157,6 +175,7 @@ const resetDatabase = async () => {
 };
 
 module.exports = {
+    userWrite,
     userGenderWrite,
     waitRoomWrite,
     waitRoomRemove,
