@@ -87,6 +87,7 @@ const waitRoomRead = async () => {
             ret.push({
                 id: key,
                 gender: temp.gender,
+                targetGender: temp.targetGender,
                 time: new Date(temp.time),
             });
 
