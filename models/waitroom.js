@@ -13,6 +13,11 @@ const WaitRoomSchema = new Schema({
     enum: Object.keys(GenderEnum),
     required: true,
   },
+  targetGender: {
+    type: String,
+    enum: Object.keys(GenderEnum),
+    required: true,
+  },
   time: {
     type: Date,
     required: true,

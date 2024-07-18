@@ -10,23 +10,24 @@ const logger = require('../../utils/logger');
 
 const waitRoomCache = new MegaHash();
 const chatRoomCache = new MegaHash();
-const genderCache = new MegaHash();
+const userCache = new MegaHash();
 const lastPersonCache = new MegaHash();
 
 // Use mutex to avoid race conditions
 const waitRoomCacheMutex = new Mutex();
 const chatRoomCacheMutex = new Mutex();
-const genderCacheMutex = new Mutex();
+const userCacheMutex = new Mutex();
 const lastPersonCacheMutex = new Mutex();
 
 /**
  * Add user to wait room
  * @param id - ID of user
  * @param gender - Gender of user
+ * @param target - Target gender of user
  * @param time - Time
  */
-const waitRoomWrite = async (id, gender, time) => {
-    const entry = { gender, time };
+const waitRoomWrite = async (id, gender, targetGender, time) => {
+    const entry = { gender, targetGender, time };
 
     const release = await waitRoomCacheMutex.acquire();
     try {
@@ -209,14 +210,16 @@ const chatRoomRead = async () => {
 };
 
 /**
- * Save gender in cache
+ * Save gender of user in cache
  * @param id - ID of user
  * @param gender - Gender of user
  */
-const genderWrite = async (id, gender) => {
-    const release = await genderCacheMutex.acquire();
+const userGenderWrite = async (id, gender) => {
+    const release = await userCacheMutex.acquire();
     try {
-        genderCache.set(id, gender);
+        const user = userCache.get(id) || {};
+        user.gender = gender;
+        userCache.set(id, user);
     } catch (err) {
         logger.logError('cache::genderWrite', 'This should never happen', err, true);
     } finally {
@@ -225,16 +228,16 @@ const genderWrite = async (id, gender) => {
 };
 
 /**
- * Get gender of user
+ * Get user by ID
  * Return `null` if not available.
  * @param id - ID of user
  */
-const genderFind = async (id) => {
+const userFind = async (id) => {
     let ret = null;
 
-    const release = await genderCacheMutex.acquire();
+    const release = await userCacheMutex.acquire();
     try {
-        ret = genderCache.has(id) ? genderCache.get(id) : null;
+        ret = userCache.has(id) ? userCache.get(id) : null;
     } catch (err) {
         logger.logError('cache::genderFind', 'This should never happen', err, true);
     } finally {
@@ -245,18 +248,18 @@ const genderFind = async (id) => {
 };
 
 /**
- * Return gender data
+ * Return list user data
  */
-const genderRead = async () => {
+const userRead = async () => {
     const ret = [];
 
-    const release = await genderCacheMutex.acquire();
+    const release = await userCacheMutex.acquire();
     try {
-        let key = genderCache.nextKey();
+        let key = userCache.nextKey();
         while (key) {
-            const gender = genderCache.get(key);
-            ret.push({ id: key, gender });
-            key = chatRoomCache.nextKey(key);
+            const user = userCache.get(key);
+            ret.push({ id: key, user });
+            key = userCache.nextKey(key);
         }
     } catch (err) {
         logger.logError('cache::genderRead', 'This should never happen', err, true);
@@ -380,7 +383,7 @@ module.exports = {
     chatRoomRemove,
     chatRoomRead,
 
-    genderWrite,
+    userGenderWrite,
     genderFind,
     genderRead,
 

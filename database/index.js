@@ -6,7 +6,7 @@
 
 const ChatRoom = require('../models/chatroom');
 const WaitRoom = require('../models/waitroom');
-const Gender = require('../models/gender');
+const User = require('../models/user');
 const LastPerson = require('../models/lastperson');
 
 const cache = require('./cache');
@@ -29,12 +29,12 @@ const initCache = async () => {
 
         const wr = await WaitRoom.find();
         wr.forEach(async (item) => {
-            await cache.waitRoomWrite(item.id, item.gender, item.time);
+            await cache.waitRoomWrite(item.id, item.gender, item.targetGender, item.time);
         });
 
-        const gd = await Gender.find();
+        const gd = await User.find();
         gd.forEach(async (item) => {
-            await cache.genderWrite(item.id, item.gender);
+            await cache.userWrite(item.id, item.gender, item.chatHistory);
         });
 
         const lp = await LastPerson.find();
@@ -51,30 +51,30 @@ const initCache = async () => {
 
 
 /**
- * Save gender to database
+ * Save user to database
  * @param id - ID of user
  * @param gender - Gender of user
  */
-const setGender = async (id, gender) => {
-    await Promise.all([cache.genderWrite(id, gender), mongo.genderWrite(id, gender)]);
+const setUserGender = async (id, gender) => {
+    await Promise.all([cache.userGenderWrite(id, gender), mongo.userGenderWrite(id, gender)]);
 };
 
 
 /**
- * Get gender of user from database.
+ * Get user from database.
  * Return `null` if not available.
  * @param id - ID of user
  */
-const getGender = async (id) => {
-    return await cache.genderFind(id);
+const getUser = async (id) => {
+    return await cache.userFind(id);
 };
 
 
 /**
- * Return gender data
+ * Return user list data
  */
-const getListGender = async () => {
-    return await cache.genderRead();
+const getListUser = async () => {
+    return await cache.userRead();
 };
 
 
@@ -83,8 +83,8 @@ const getListGender = async () => {
  * @param id - ID of user
  * @param gender - Gender of user
  */
-const writeToWaitRoom = async (id, gender, time = new Date()) => {
-    await Promise.all([cache.waitRoomWrite(id, gender, time), mongo.waitRoomWrite(id, gender, time)]);
+const writeToWaitRoom = async (id, gender, targetGender, time = new Date()) => {
+    await Promise.all([cache.waitRoomWrite(id, gender, targetGender, time), mongo.waitRoomWrite(id, gender, targetGender, time)]);
 };
 
 
@@ -194,10 +194,10 @@ module.exports = {
     // Cache stuffs
     initCache,
 
-    // Gender stuffs
-    setGender,
-    getGender,
-    getListGender,
+    // User stuffs
+    setUserGender,
+    getUser,
+    getListUser,
 
     // WaitRoom stuffs
     writeToWaitRoom,

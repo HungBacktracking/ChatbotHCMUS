@@ -6,7 +6,7 @@
 const { Mutex } = require('async-mutex');
 const ChatRoom = require('../../models/chatroom');
 const WaitRoom = require('../../models/waitroom');
-const Gender = require('../../models/gender');
+const Gender = require('../../models/user');
 const LastPerson = require('../../models/lastperson');
 const GenderEnum = require('../../models/GenderEnum');
 const logger = require('../../utils/logger');
@@ -20,11 +20,11 @@ const logger = require('../../utils/logger');
 const mongoMutex = new Mutex();
 
 /**
- * Save gender to database
+ * Save gender of user to database
  * @param id - ID of user
  * @param gender - Gender of user
  */
-const genderWrite = async (id, gender) => {
+const userGenderWrite = async (id, gender) => {
     const release = await mongoMutex.acquire();
     try {
         await Gender.findOneAndUpdate({ id }, { $set: { gender } }, { upsert: true });
@@ -40,11 +40,12 @@ const genderWrite = async (id, gender) => {
  * Add user to wait room
  * @param id - ID of user
  * @param gender - Gender of user
+ * @param target - Target gender of user
  */
-const waitRoomWrite = async (id, gender, time) => {
+const waitRoomWrite = async (id, gender, targetGender, time) => {
     const release = await mongoMutex.acquire();
     try {
-        await WaitRoom.findOneAndUpdate({ id }, { $set: { gender, time } }, { upsert: true });
+        await WaitRoom.findOneAndUpdate({ id }, { $set: { gender, targetGender, time } }, { upsert: true });
     } catch (err) {
         logger.logError('mongo::waitRoomWrite', 'Failed to save data to MongoDB', err, true);
     } finally {
@@ -156,7 +157,7 @@ const resetDatabase = async () => {
 };
 
 module.exports = {
-    genderWrite,
+    userGenderWrite,
     waitRoomWrite,
     waitRoomRemove,
     chatRoomWrite,

@@ -60,23 +60,23 @@ const processEvent = async (event) => {
             const gender = await chatbotUtils.getGender(sender);
             await chatbotUtils.findPair(sender, gender);
         } else if (command.startsWith(lang.KEYWORD_GENDER)) {
-            const gender = chatbotUtils.parseGender(command);
-            if (gender === null) {
+            const gender = await chatbotUtils.getGender(sender);
+            const targetGender = chatbotUtils.parseGender(command);
+            if (targetGender === null) {
                 await fb.sendTextButtons(sender, lang.GENDER_ERR, false, false, true, true, false);
             } else {
                 let genderString = '';
-                if (gender === GenderEnum.MALE) {
-                    genderString = lang.GENDER_ARR_FEMALE;
-                } else if (gender === GenderEnum.FEMALE) {
+                if (targetGender === GenderEnum.MALE) {
                     genderString = lang.GENDER_ARR_MALE;
+                } else if (targetGender === GenderEnum.FEMALE) {
+                    genderString = lang.GENDER_ARR_FEMALE;
                 }
         
-                if (gender !== GenderEnum.UNKNOWN) {
+                if (targetGender !== GenderEnum.UNKNOWN) {
                     await fb.sendTextMessage('', sender, lang.GENDER_WRITE_OK + genderString + lang.GENDER_WRITE_WARN, false);
                 }
         
-                await db.setGender(sender, gender);
-                await chatbotUtils.findPair(sender, gender);
+                await chatbotUtils.findPair(sender, gender, targetGender);
             }
         } else if (command === lang.KEYWORD_HELP) {
             await fb.sendTextButtons(sender, lang.HELP_TXT, true, false, true, true, false);

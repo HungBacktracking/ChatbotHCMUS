@@ -13,9 +13,9 @@ const GenderEnum = require('../models/GenderEnum');
 const parseGender = (genderString) => {
     let res;
     if (genderString === lang.KEYWORD_GENDER + lang.KEYWORD_GENDER_MALE) {
-        res = GenderEnum.FEMALE;
-    } else if (genderString === lang.KEYWORD_GENDER + lang.KEYWORD_GENDER_FEMALE) {
         res = GenderEnum.MALE;
+    } else if (genderString === lang.KEYWORD_GENDER + lang.KEYWORD_GENDER_FEMALE) {
+        res = GenderEnum.FEMALE;
     } else if (genderString === lang.KEYWORD_GENDER + lang.KEYWORD_GENDER_BOTH) {
         res = GenderEnum.UNKNOWN;
     } else {
@@ -77,15 +77,17 @@ const pairPeople = async (id1, id2, gender1, gender2) => {
  * @param id - ID of new user
  * @param myGender - Gender of new user
  */
-const findPair = async (id, myGender) => {
+const findPair = async (id, myGender, myTargetGender) => {
     const waitRoomList = await db.getListWaitRoom();
 
     for (const entry of waitRoomList) {
-        const target = entry.id;
-        const targetGender = entry.gender;
+        const user = entry.id;
+        const userGender = entry.gender;
+        const userTargetGender = entry.targetGender;
+
 
         // check if they have just been paired
-        if ((await db.checkLastPerson(id, target)) || (await db.checkLastPerson(target, id))) {
+        if ((await db.checkLastPerson(id, user)) || (await db.checkLastPerson(user, id))) {
             continue;
         }
 
@@ -94,22 +96,24 @@ const findPair = async (id, myGender) => {
         // or gender of one of them is unknown (with probability 0.2)
 
         const isPreferredGender =
-            (myGender === GenderEnum.UNKNOWN && targetGender === GenderEnum.UNKNOWN) ||
-            (myGender === GenderEnum.MALE && targetGender === GenderEnum.FEMALE) ||
-            (myGender === GenderEnum.FEMALE && targetGender === GenderEnum.MALE);
+            (myGender === GenderEnum.UNKNOWN && userGender === GenderEnum.UNKNOWN) ||
+            (myGender === GenderEnum.MALE && userTargetGender === GenderEnum.MALE) ||
+            (myGender === GenderEnum.FEMALE && userTargetGender === GenderEnum.FEMALE) ||
+            (myTargetGender === GenderEnum.MALE && userGender === GenderEnum.MALE) ||
+            (myTargetGender === GenderEnum.FEMALE && userGender === GenderEnum.FEMALE);
 
         if (
             isPreferredGender ||
             waitRoomList.length > config.MAX_PEOPLE_IN_WAITROOM ||
-            ((myGender === GenderEnum.UNKNOWN || targetGender === GenderEnum.UNKNOWN) && Math.random() > 0.8)
+            ((myGender === GenderEnum.UNKNOWN || userGender === GenderEnum.UNKNOWN) && Math.random() > 0.8)
         ) {
-            await pairPeople(id, target, myGender, targetGender);
+            await pairPeople(id, user, myGender, userGender);
             return;
         }
     }
 
     // found no match, put in wait room
-    await db.writeToWaitRoom(id, myGender);
+    await db.writeToWaitRoom(id, myGender, myTargetGender);
 
     if (myGender === GenderEnum.UNKNOWN) {
         await fb.sendTextMessage('', id, lang.START_WARN_GENDER, false);

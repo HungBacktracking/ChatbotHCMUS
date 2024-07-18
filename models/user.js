@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 const GenderEnum = require('./GenderEnum');
 
-const GenderSchema = new Schema({
+const UserSchema = new Schema({
   id: {
     type: String,
     required: true,
@@ -13,6 +13,10 @@ const GenderSchema = new Schema({
     enum: Object.keys(GenderEnum),
     required: true,
   },
+  chatHistory: {
+    type: [String],
+    default: [],
+  }
 });
 
-module.exports = model('gender', GenderSchema);
+module.exports = model('user', UserSchema);
