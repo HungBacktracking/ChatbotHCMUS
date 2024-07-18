@@ -47,7 +47,7 @@ const getGender = async (id) => {
         gender = GenderEnum.FEMALE;
     }
 
-    await db.setGender(id, gender);
+    await db.setUserGender(id, gender);
     return gender;
 };
 
