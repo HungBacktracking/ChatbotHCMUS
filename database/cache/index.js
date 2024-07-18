@@ -211,6 +211,24 @@ const chatRoomRead = async () => {
 };
 
 /**
+ * Save user in cache
+ * @param id - ID of user
+ * @param gender - Gender of user
+ */
+const userWrite = async (id, gender, chatHistory) => {
+    const entry = { gender, chatHistory };
+
+    const release = await userCacheMutex.acquire();
+    try {
+        userCache.set(id, entry);
+    } catch (err) {
+        logger.logError('cache::genderWrite', 'This should never happen', err, true);
+    } finally {
+        release();
+    }
+};
+
+/**
  * Save gender of user in cache
  * @param id - ID of user
  * @param gender - Gender of user
@@ -385,6 +403,7 @@ module.exports = {
     chatRoomRemove,
     chatRoomRead,
 
+    userWrite,
     userGenderWrite,
     userFind,
     userRead,
