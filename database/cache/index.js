@@ -362,11 +362,11 @@ const clear = async () => {
         release();
     }
 
-    release = await genderCacheMutex.acquire();
+    release = await userCacheMutex.acquire();
     try {
-        genderCache.clear();
+        userCache.clear();
     } catch (err) {
-        logger.logError('cache::clear::gender', 'This should never happen', err, true);
+        logger.logError('cache::clear::user', 'This should never happen', err, true);
     } finally {
         release();
     }
@@ -384,8 +384,8 @@ module.exports = {
     chatRoomRead,
 
     userGenderWrite,
-    genderFind,
-    genderRead,
+    userFind,
+    userRead,
 
     lastPersonCheck,
     lastPersonWrite,
