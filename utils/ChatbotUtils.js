@@ -32,7 +32,8 @@ const parseGender = (genderString) => {
  * @returns Gender of user
  */
 const getGender = async (id) => {
-    let gender = await db.getUser(id).gender;
+    let user = await db.getUser(id);
+    let gender = user ? user.gender : null;
     if (gender) {
         return gender;
     }
@@ -95,15 +96,12 @@ const findPair = async (id, myGender, myTargetGender) => {
         // or gender of one of them is unknown (with probability 0.2)
 
         const isPreferredGender =
-            (myGender === GenderEnum.UNKNOWN && userGender === GenderEnum.UNKNOWN) ||
-            (myGender === GenderEnum.MALE && userTargetGender === GenderEnum.MALE) ||
-            (myGender === GenderEnum.FEMALE && userTargetGender === GenderEnum.FEMALE) ||
-            (myTargetGender === GenderEnum.MALE && userGender === GenderEnum.MALE) ||
-            (myTargetGender === GenderEnum.FEMALE && userGender === GenderEnum.FEMALE);
+            (myTargetGender === GenderEnum.UNKNOWN && userTargetGender === GenderEnum.UNKNOWN) ||
+            (myGender === GenderEnum.MALE && myTargetGender === GenderEnum.MALE && userGender === GenderEnum.MALE && userTargetGender === GenderEnum.MALE) ||
+            (myGender === GenderEnum.FEMALE && myTargetGender === GenderEnum.FEMALE && userGender === GenderEnum.FEMALE && userTargetGender === GenderEnum.FEMALE) ||
+            (myGender === GenderEnum.MALE && myTargetGender === GenderEnum.FEMALE && userGender === GenderEnum.FEMALE && userTargetGender === GenderEnum.MALE) ||
+            (myGender === GenderEnum.FEMALE && myTargetGender === GenderEnum.MALE && userGender === GenderEnum.MALE && userTargetGender === GenderEnum.FEMALE);
 
-        console.log('myGender:', myGender, 'myTargetGender:', myTargetGender);
-        console.log('userGender:', userGender, 'userTargetGender:', userTargetGender);
-        console.log('isPreferredGender:', isPreferredGender);
 
         if (
             isPreferredGender ||
@@ -118,7 +116,7 @@ const findPair = async (id, myGender, myTargetGender) => {
     // found no match, put in wait room
     await db.writeToWaitRoom(id, myGender, myTargetGender);
 
-    if (myGender === GenderEnum.UNKNOWN) {
+    if (myTargetGender === GenderEnum.UNKNOWN) {
         await fb.sendTextMessage('', id, lang.START_WARN_GENDER, false);
     }
     await fb.sendTextMessage('', id, lang.START_OKAY, false);

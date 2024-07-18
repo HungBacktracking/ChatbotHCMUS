@@ -58,7 +58,7 @@ const processEvent = async (event) => {
         // neither in chat room nor wait room
         if (command === lang.KEYWORD_START) {
             const gender = await chatbotUtils.getGender(sender);
-            await chatbotUtils.findPair(sender, gender);
+            await chatbotUtils.findPair(sender, gender, 'UNKNOWN');
         } else if (command.startsWith(lang.KEYWORD_GENDER)) {
             const gender = await chatbotUtils.getGender(sender);
             const targetGender = chatbotUtils.parseGender(command);
