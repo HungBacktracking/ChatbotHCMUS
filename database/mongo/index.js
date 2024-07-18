@@ -27,7 +27,7 @@ const mongoMutex = new Mutex();
 const userGenderWrite = async (id, gender) => {
     const release = await mongoMutex.acquire();
     try {
-        await Gender.findOneAndUpdate({ id }, { $set: { gender } }, { upsert: true });
+        await User.findOneAndUpdate({ id }, { $set: { gender } }, { upsert: true });
     } catch (err) {
         logger.logError('mongo::genderWrite', 'Failed to save data to MongoDB', err, true);
     } finally {
