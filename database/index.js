@@ -39,6 +39,7 @@ const initCache = async () => {
 
         const lp = await LastPerson.find();
         lp.forEach(async (item) => {
+            console.log("Test lastperson: ", item);
             await cache.lastPersonWrite(item.id1, item.id2);
         });
 
