@@ -1,18 +1,5 @@
-const fb = require('../utils/facebook');
-// const config = require('../config');
+const fb = require('./facebook');
 
-// const axios = require('axios');
-
-// async function getPageId(pageUsername, accessToken) {
-//     const url = `https://graph.facebook.com/v12.0/${pageUsername}?fields=id&access_token=${accessToken}`;
-//     try {
-//         const response = await axios.get(url);
-//         return response.data.id;
-//     } catch (error) {
-//         console.error("Error fetching Page ID:", error);
-//         return null;
-//     }
-// }
 
 const club = [
     { 
@@ -30,24 +17,10 @@ const club = [
     
 ];
 
-// async function fetchImageUrl(pageId, accessToken) {
-//     const url = `https://graph.facebook.com/v12.0/${pageId}/picture?type=large&redirect=false&access_token=${accessToken}`;
-//     try {
-//         const response = await axios.get(url);
-//         return response.data.data.url;
-//     } catch (error) {
-//         console.error("Failed to fetch image URL", error);
-//         return null;
-//     }
-// }
+
 
 async function suggestClub(sender) {
     const elements = await Promise.all(club.map(async club => {
-
-        // const pageUsername = club.link.split('https://www.facebook.com/')[1];
-        // const pageId = await getPageId(pageUsername, config.ACCESS_TOKEN);
-        // const imageUrl = await fetchImageUrl(pageId, config.ACCESS_TOKEN); 
-        
         return {
             title: club.name,
             subtitle: club.description,
@@ -61,6 +34,7 @@ async function suggestClub(sender) {
             ],
         }
     }));
+    
     const payload = {
         template_type: 'generic',
         elements,

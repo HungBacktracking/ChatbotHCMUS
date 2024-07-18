@@ -6,7 +6,7 @@ const gifts = require('../utils/gifts');
 const chatbotUtils = require('../utils/ChatbotUtils');
 const GenderEnum = require('../models/GenderEnum');
 const LLM = require('../services/llm_service');
-const club = require('../services/club');
+const club = require('../utils/club');
 
 /**
  * Process messaging event sent by Facebook
