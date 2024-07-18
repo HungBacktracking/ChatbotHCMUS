@@ -84,9 +84,6 @@ const findPair = async (id, myGender, myTargetGender) => {
         const user = entry.id;
         const userGender = entry.gender;
         const userTargetGender = entry.targetGender;
-        console.log('myGender:', myGender, 'myTargetGender:', myTargetGender);
-        console.log('userGender:', userGender, 'userTargetGender:', userTargetGender);
-
 
         // check if they have just been paired
         if ((await db.checkLastPerson(id, user)) || (await db.checkLastPerson(user, id))) {
@@ -103,6 +100,10 @@ const findPair = async (id, myGender, myTargetGender) => {
             (myGender === GenderEnum.FEMALE && userTargetGender === GenderEnum.FEMALE) ||
             (myTargetGender === GenderEnum.MALE && userGender === GenderEnum.MALE) ||
             (myTargetGender === GenderEnum.FEMALE && userGender === GenderEnum.FEMALE);
+
+        console.log('myGender:', myGender, 'myTargetGender:', myTargetGender);
+        console.log('userGender:', userGender, 'userTargetGender:', userTargetGender);
+        console.log('isPreferredGender:', isPreferredGender);
 
         if (
             isPreferredGender ||
