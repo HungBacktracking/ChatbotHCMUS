@@ -84,6 +84,7 @@ const findPair = async (id, myGender, myTargetGender) => {
         const user = entry.id;
         const userGender = entry.gender;
         const userTargetGender = entry.targetGender;
+        console.log('myGender:', myGender, 'myTargetGender:', myTargetGender);
         console.log('userGender:', userGender, 'userTargetGender:', userTargetGender);
 
 
