@@ -7,7 +7,7 @@ const PartSchema = new Schema({
     type: String,
     required: true,
   },
-});
+}, { _id: false });
 
 
 const MessageSchema = new Schema({
@@ -20,7 +20,7 @@ const MessageSchema = new Schema({
     type: [PartSchema],
     required: true,
   },
-});
+}, { _id: false });
 
 
 
