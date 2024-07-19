@@ -46,11 +46,14 @@ const generateResponse = async (userId, message) => {
         await db.setUser(userId, '', newChat);
 
         logger.logError('LLM::generateResponse', 'Content: ' + text);
-        return text;
+        return response;
 
     } catch (error) {
-        logger.logError('LLM::generateResponse', 'Failed to generate AI response ' + config.GEMINI_API, error, true);
-        return "Sorry, I am not able to generate a response at the moment. Please try again later.";
+        logger.logError('LLM::generateResponse', 'Failed to generate AI response ', error, true);
+        const response = "Sorry, I am not able to generate a response at the moment. Please try again later.";
+        await fb.sendTextMessage('', userId, response, false);
+
+        return response;
     }
 }
 
