@@ -1,22 +1,51 @@
 const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
 const config = require('../config');
 const logger = require('../utils/logger'); 
+const fb = require('../utils/facebook');
+const db = require('../database');
 
 const genAI = new GoogleGenerativeAI(config.GEMINI_API);
-const model = genAI.getGenerativeModel({ model: "gemini-pro"});
 
 
-const generateResponse = async (command) => {
+const getChatHistory = async (user) => {
+    let chatHistory = [];
+    if (user && user.chatHistory) {
+        chatHistory = user.chatHistory;
+    }
+
+    prompt = {
+        role: "user",
+        parts: [{ text: await db.getPrompt("normal") }]
+    };
+    chatHistory.splice(0, 0, prompt);
+    return chatHistory;
+}
+
+
+/**
+ * Generate a response from the AI model
+ * @param {string} userId - The user ID
+ * @param {string} message - The message to generate a response for
+ */
+const generateResponse = async (userId, message) => {
     try {
-        const prompt = command;
-        
-        const result = await model.generateContent(prompt);
+        const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+        const user = await db.getUser(userId);
+
+        let chatHistory = await getChatHistory(user);
+        const chat = model.startChat({ history: chatHistory });
+
+        const result = await chat.sendMessage(message);
         const response = result.response;
+        await fb.sendTextMessage('', userId, response, false);
 
-        // Ensure the text is UTF-8 encoded
-        const text = Buffer.from(response.text(), 'utf-8').toString();
+        newChat = [
+            { role: "user", parts: [{ text: message }] },
+            { role: "model", parts: [{ text: response }] }
+        ];
+        await db.setUser(userId, '', newChat);
+
         logger.logError('LLM::generateResponse', 'Content: ' + text);
-
         return text;
 
     } catch (error) {
@@ -28,3 +57,4 @@ const generateResponse = async (command) => {
 module.exports = {
     generateResponse
 };
+

@@ -87,8 +87,7 @@ const processEvent = async (event) => {
         } else if (command === lang.KEYWORD_CLUB) {
             await club.suggestClub(sender);
         } else if (!event.read) {
-            const responseLLM = await LLM.generateResponse(command);
-            await fb.sendTextMessage('', sender, responseLLM, false);
+            await LLM.generateResponse(sender, command);
         }
     } else if (waitState && sender2 === null) {
         // in wait room and waiting
@@ -104,8 +103,7 @@ const processEvent = async (event) => {
         } else if (command === lang.KEYWORD_CLUB) {
             await club.suggestClub(sender);
         } else if (!event.read) {
-            const responseLLM = await LLM.generateResponse(command);
-            await fb.sendTextMessage('', sender, responseLLM, false);
+            await LLM.generateResponse(sender, command);
         }
     } else if (!waitState && sender2 !== null) {
         // in chat room
@@ -122,6 +120,7 @@ const processEvent = async (event) => {
             await chatbotUtils.forwardMessage(sender, sender2, event.message);
             await gifts.sendDogPic(sender, sender2);
         } else if (command === lang.KEYWORD_CLUB) {
+            await chatbotUtils.forwardMessage(sender, sender2, event.message);
             await club.suggestClub(sender);
         } else {
             // FIX-ME: Only send seen indicator for messages before watermark

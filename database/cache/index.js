@@ -10,12 +10,14 @@ const logger = require('../../utils/logger');
 
 const waitRoomCache = new MegaHash();
 const chatRoomCache = new MegaHash();
+const promptCache = new MegaHash();
 const userCache = new MegaHash();
 const lastPersonCache = new MegaHash();
 
 // Use mutex to avoid race conditions
 const waitRoomCacheMutex = new Mutex();
 const chatRoomCacheMutex = new Mutex();
+const promptCacheMutex = new Mutex();
 const userCacheMutex = new Mutex();
 const lastPersonCacheMutex = new Mutex();
 
@@ -210,42 +212,114 @@ const chatRoomRead = async () => {
     return ret;
 };
 
+
+/**
+ * Save prompt in cache
+ * @param mode - Mode of prompt
+ * @param content - Content of prompt
+ */
+const promptWrite = async (mode, content) => {
+    const release = await promptCacheMutex.acquire();
+    try {
+        promptCache.set(mode, content);
+    } catch (err) {
+        logger.logError('cache::promptWrite', 'This should never happen', err, true);
+    } finally {
+        release();
+    }
+};
+
+/**
+ * Get prompt from cache
+ * @param mode - Mode of prompt
+ */
+const promptFind = async (mode) => {
+    let res = null;
+
+    const release = await promptCacheMutex.acquire();
+    try {
+        res = promptCache.has(mode) ? promptCache.get(mode) : null;
+    } catch (err) {
+        logger.logError('cache::promptFind', 'This should never happen', err, true);
+    } finally {
+        release();
+    }
+
+    return res;
+};
+
+/**
+ * Remove prompt from cache
+ * @param mode - Mode of prompt
+ */
+const promptRemove = async (mode) => {
+    const release = await promptCacheMutex.acquire();
+    try {
+        promptCache.remove(mode);
+    } catch (err) {
+        logger.logError('cache::promptRemove', 'This should never happen', err, true);
+    } finally {
+        release();
+    }
+};
+
+
+/**
+ * Read all prompts from cache
+ */
+const promptRead = async () => {
+    const ret = [];
+
+    const release = await promptCacheMutex.acquire();
+    try {
+        let key = promptCache.nextKey();
+        while (key) {
+            ret.push({ mode: key, content: promptCache.get(key) });
+            key = promptCache.nextKey(key);
+        }
+    } catch (err) {
+        logger.logError('cache::promptRead', 'This should never happen', err, true);
+    } finally {
+        release();
+    }
+
+    return ret;
+};
+
+
 /**
  * Save user in cache
  * @param id - ID of user
  * @param gender - Gender of user
  * @param chatHistory - Chat history of user
  */
-const userWrite = async (id, gender, chatHistory) => {
-    const entry = { gender, chatHistory };
-
+const userWrite = async (id, gender = '', chatHistory = []) => {
     const release = await userCacheMutex.acquire();
     try {
-        userCache.set(id, entry);
-    } catch (err) {
-        logger.logError('cache::genderWrite', 'This should never happen', err, true);
-    } finally {
-        release();
-    }
-};
+        const user = userCache.get(id) || { chatHistory: [] };
 
-/**
- * Save gender of user in cache
- * @param id - ID of user
- * @param gender - Gender of user
- */
-const userGenderWrite = async (id, gender) => {
-    const release = await userCacheMutex.acquire();
-    try {
-        const user = userCache.get(id) || {};
-        user.gender = gender;
+        if (gender !== '') {
+            user.gender = gender;
+        }
+
+        // Thêm chat history mới vào 
+        if (chatHistory.length > 0) {
+            user.chatHistory = user.chatHistory.concat(chatHistory);
+        }
+
+        // Nếu số cuộc hội thoại vượt quá 6 thì xóa 2 hội thoại đầu tiên
+        while (user.chatHistory.length > 6) {
+            user.chatHistory.splice(0, 2);
+        }
+
         userCache.set(id, user);
     } catch (err) {
-        logger.logError('cache::genderWrite', 'This should never happen', err, true);
+        logger.logError('cache::userWrite', 'This should never happen', err, true);
     } finally {
         release();
     }
 };
+
 
 /**
  * Get user by ID
@@ -260,7 +334,7 @@ const userFind = async (id) => {
         ret = userCache.has(id) ? userCache.get(id) : null;
         console.log('userFind', ret);
     } catch (err) {
-        logger.logError('cache::genderFind', 'This should never happen', err, true);
+        logger.logError('cache::userFind', 'This should never happen', err, true);
     } finally {
         release();
     }
@@ -283,7 +357,7 @@ const userRead = async () => {
             key = userCache.nextKey(key);
         }
     } catch (err) {
-        logger.logError('cache::genderRead', 'This should never happen', err, true);
+        logger.logError('cache::userRead', 'This should never happen', err, true);
     } finally {
         release();
     }
@@ -404,8 +478,12 @@ module.exports = {
     chatRoomRemove,
     chatRoomRead,
 
+    promptWrite,
+    promptFind,
+    promptRemove,
+    promptRead,
+
     userWrite,
-    userGenderWrite,
     userFind,
     userRead,
 

@@ -8,6 +8,7 @@ const ChatRoom = require('../models/chatroom');
 const WaitRoom = require('../models/waitroom');
 const User = require('../models/user');
 const LastPerson = require('../models/lastperson');
+const Prompt = require('../models/prompt');
 
 const cache = require('./cache');
 const mongo = require('./mongo');
@@ -42,6 +43,11 @@ const initCache = async () => {
             await cache.lastPersonWrite(item.id1, item.id2);
         });
 
+        const pr = await Prompt.find();
+        pr.forEach(async (item) => {
+            await cache.promptWrite(item.mode, item.content);
+        });
+
         return true;
     } catch (err) {
         logger.logError('db::initCache', 'Failed to initialize cache', err, true);
@@ -49,24 +55,47 @@ const initCache = async () => {
     }
 };
 
+/**
+ * Save prompt to database
+ * @param mode - Mode of prompt
+ * @param content - Content of prompt
+ */
+const setPrompt = async (mode, content) => {
+    await Promise.all([cache.promptWrite(mode, content), mongo.promptWrite(mode, content)]);
+};
+
+/**
+ * Get prompt from database
+ * @param mode - Mode of prompt
+ */
+const getPrompt = async (mode) => {
+    return await cache.promptFind(mode);
+};
+
+/**
+ * Get all prompts from database
+ */
+const getAllPrompts = async () => {
+    return await cache.promptRead();
+};
+
+/**
+ * Remove prompt from database
+ * @param mode - Mode of prompt
+ */
+const removePrompt = async (mode) => {
+    await Promise.all([cache.promptRemove(mode), mongo.promptRemove(mode)]);
+};
+
 
 /**
  * Save user to database
  * @param id - ID of user
  * @param gender - Gender of user
+ * @param chatHistory - Chat history of user
  */
 const setUser = async (id, gender, chatHistory) => {
-    await Promise.all([cache.userWrite(id, gender, chatHistory), mongo.userWrite(id, gender)]);
-};
-
-
-/**
- * Save user gender to database
- * @param id - ID of user
- * @param gender - Gender of user
- */
-const setUserGender = async (id, gender) => {
-    await Promise.all([cache.userGenderWrite(id, gender), mongo.userGenderWrite(id, gender)]);
+    await Promise.all([cache.userWrite(id, gender, chatHistory), mongo.userWrite(id, gender, chatHistory)]);
 };
 
 
@@ -193,6 +222,7 @@ const getListLastPerson = async () => {
 };
 
 
+
 /**
  * Delete everything in database
  */
@@ -205,9 +235,14 @@ module.exports = {
     // Cache stuffs
     initCache,
 
+    // Prompt stuffs
+    setPrompt,
+    getPrompt,
+    getAllPrompts,
+    removePrompt,
+
     // User stuffs
     setUser,
-    setUserGender,
     getUser,
     getListUser,
 

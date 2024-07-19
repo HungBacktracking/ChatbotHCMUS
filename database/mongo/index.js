@@ -19,39 +19,77 @@ const logger = require('../../utils/logger');
  */
 const mongoMutex = new Mutex();
 
+
 /**
- * Save gender of user to database
+ * Save prompt to database
+ * @param mode - Mode of prompt
+ * @param content - Content of prompt
+ */
+const promptWrite = async (mode, content) => {
+    const release = await mongoMutex.acquire();
+    try {
+        await Prompt.findOneAndUpdate({ mode }, { $set: { content } }, { upsert: true });
+    } catch (err) {
+        logger.logError('mongo::promptWrite', 'Failed to save data to MongoDB', err, true);
+    } finally {
+        release();
+    }
+};
+
+/**
+ * Remove prompt from database
+ * @param mode - Mode of prompt
+ */
+const promptRemove = async (mode) => {
+    const release = await mongoMutex.acquire();
+    try {
+        await Prompt.deleteOne({ mode });
+    } catch (err) {
+        logger.logError('mongo::promptRemove', 'Failed to save data to MongoDB', err, true);
+    } finally {
+        release();
+    }
+}
+
+
+/**
+ * Save user to database
  * @param id - ID of user
  * @param gender - Gender of user
  * @param chatHistory - Chat history of user
  */
-const userWrite = async (id, gender, chatHistory) => {
+const userWrite = async (id, gender = '', chatHistory = []) => {
     const release = await mongoMutex.acquire();
     try {
-        await User.findOneAndUpdate({ id }, { $set: { gender, chatHistory } }, { upsert: true });
+        const updateFields = {};
+
+        if (gender !== '') {
+            updateFields.gender = gender;
+        }
+
+        if (chatHistory.length > 0) {
+            // Lấy user hiện tại từ database
+            const user = await User.findOne({ id });
+
+            if (user && user.chatHistory) {
+                updateFields.chatHistory = user.chatHistory.concat(chatHistory);
+            } else {
+                updateFields.chatHistory = chatHistory;
+            }
+
+            while (updateFields.chatHistory.length > 6) {
+                updateFields.chatHistory.splice(0, 2);
+            }
+        }
+
+        await User.findOneAndUpdate({ id }, { $set: updateFields }, { upsert: true });
     } catch (err) {
-        logger.logError('mongo::genderWrite', 'Failed to save data to MongoDB', err, true);
+        logger.logError('mongo::userWrite', 'Failed to save data to MongoDB', err, true);
     } finally {
         release();
     }
 };
 
-
-/**
- * Save gender of user to database
- * @param id - ID of user
- * @param gender - Gender of user
- */
-const userGenderWrite = async (id, gender) => {
-    const release = await mongoMutex.acquire();
-    try {
-        await User.findOneAndUpdate({ id }, { $set: { gender } }, { upsert: true });
-    } catch (err) {
-        logger.logError('mongo::genderWrite', 'Failed to save data to MongoDB', err, true);
-    } finally {
-        release();
-    }
-};
 
 
 /**
@@ -141,6 +179,7 @@ const lastPersonWrite = async (id1, id2) => {
 };
 
 
+
 /**
  * Delete everything in database
  */
@@ -175,8 +214,9 @@ const resetDatabase = async () => {
 };
 
 module.exports = {
+    promptWrite,
+    promptRemove,
     userWrite,
-    userGenderWrite,
     waitRoomWrite,
     waitRoomRemove,
     chatRoomWrite,
