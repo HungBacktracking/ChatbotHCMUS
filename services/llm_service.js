@@ -45,7 +45,7 @@ const generateResponse = async (userId, message) => {
         ];
         await db.setUser(userId, '', newChat);
 
-        logger.logError('LLM::generateResponse', 'Content: ' + text);
+        logger.logError('LLM::generateResponse', 'Content: ' + response);
         return response;
 
     } catch (error) {
