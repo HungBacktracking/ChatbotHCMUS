@@ -55,7 +55,7 @@ const config = {
     PAGE_VERIFY_TOKEN: parseEnvString('PAGE_VERIFY_TOKEN') || '',
 
     // Maximum length of text message
-    MAX_MESSAGE_LENGTH: parseEnvNumber('MAX_MESSAGE_LENGTH') || 2000,
+    MAX_MESSAGE_LENGTH: parseEnvNumber('MAX_MESSAGE_LENGTH') || 50000,
 
     // App name (must be the same on Heroku)
     APP_NAME: parseEnvString('APP_NAME') || 'ChatbotHCMUS',
