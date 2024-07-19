@@ -36,7 +36,7 @@ const generateResponse = async (userId, message) => {
         const chat = model.startChat({ history: chatHistory });
 
         const result = await chat.sendMessage(message);
-        const response = result.response;
+        const response = result.response.text();
         await fb.sendTextMessage('', userId, response, false);
 
         newChat = [
