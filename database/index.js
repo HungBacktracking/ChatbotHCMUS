@@ -4,11 +4,11 @@
  * @packageDocumentation
  */
 
-const ChatRoom = require('../models/chatroom');
-const WaitRoom = require('../models/waitroom');
-const User = require('../models/user');
-const LastPerson = require('../models/lastperson');
-const Prompt = require('../models/prompt');
+const ChatRoom = require('./models/chatroom');
+const WaitRoom = require('./models/waitroom');
+const User = require('./models/user');
+const LastPerson = require('./models/lastperson');
+const Prompt = require('./models/prompt');
 
 const cache = require('./cache');
 const mongo = require('./mongo');

@@ -4,11 +4,11 @@
  */
 
 const { Mutex } = require('async-mutex');
-const ChatRoom = require('../../models/chatroom');
-const WaitRoom = require('../../models/waitroom');
-const User = require('../../models/user');
-const LastPerson = require('../../models/lastperson');
-const GenderEnum = require('../../models/GenderEnum');
+const ChatRoom = require('../models/chatroom');
+const WaitRoom = require('../models/waitroom');
+const User = require('../models/user');
+const LastPerson = require('../models/lastperson');
+const GenderEnum = require('../models/GenderEnum');
 const logger = require('../../utils/logger');
 
 

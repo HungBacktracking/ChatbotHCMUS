@@ -4,7 +4,7 @@ const fb = require('../utils/facebook');
 const db = require('../database');
 const gifts = require('../utils/gifts');
 const chatbotUtils = require('../utils/ChatbotUtils');
-const GenderEnum = require('../models/GenderEnum');
+const GenderEnum = require('../database/models/GenderEnum');
 const LLM = require('../services/llm_service');
 const club = require('../utils/club');
 

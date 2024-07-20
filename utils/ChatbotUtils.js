@@ -2,7 +2,7 @@ const db = require('../database');
 const config = require('../config');
 const lang = require('../lang');
 const fb = require('./facebook');
-const GenderEnum = require('../models/GenderEnum');
+const GenderEnum = require('../database/models/GenderEnum');
 
 
 /**
