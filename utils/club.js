@@ -18,8 +18,11 @@ const club = [
 ];
 
 
-
-async function suggestClub(sender) {
+/**
+ * Suggest club to user
+ * @param sender - ID of user
+ */
+const suggestClub = async (sender) => {
     const elements = await Promise.all(club.map(async club => {
         return {
             title: club.name,
