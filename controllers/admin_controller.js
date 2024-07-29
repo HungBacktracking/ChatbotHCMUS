@@ -1,6 +1,11 @@
 const Admin = require('../services/admin');
 const config = require('../config');
 
+const sentBroadcast = async (req, res) => {
+    const content = req.body.content;
+    res.send(await Admin.sentBroadcast(content));
+}
+
 const editChatRoom = async (req, res) => {
     const data = req.body;
     let ret = { success: false, error: true };
@@ -49,6 +54,7 @@ const getVersion = (req, res) => {
 };
 
 module.exports = {
+    sentBroadcast,
     editChatRoom,
     resetDatabase,
     getUserData,

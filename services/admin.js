@@ -9,6 +9,19 @@ const db = require('../database');
 const lang = require('../lang');
 const fb = require('../utils/facebook');
 
+/**
+ * Send broadcast message to all users
+ * @param content - Content of message
+ */
+const sentBroadcast = async (content) => {
+    const userList = await db.getListUser();
+    userList.forEach(async (entry) => {
+        console.log("User: ", entry);
+        await fb.sendTextMessage('', entry.id, content, false);
+    });
+    return { success: true, error: false };
+}
+
 
 /**
  * Return a list of current users in chat room
@@ -170,6 +183,7 @@ const resetDatabase = async () => {
 };
 
 module.exports = {
+    sentBroadcast,
     readChatRoom,
     readWaitRoom,
     createBackup,
