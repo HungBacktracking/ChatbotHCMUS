@@ -9,6 +9,7 @@ router.post('/userinfo', auth, adminController.getUserData);
 router.get('/auth', auth, adminController.getAuth);
 router.get('/read/chatroom', auth, adminController.readChatRoom);
 router.get('/read/waitroom', auth, adminController.readWaitRoom);
+router.get('/read/prompts', auth, adminController.readPrompts);
 router.get('/read/stats', auth, adminController.readStats);
 router.post('/broadcast', auth, adminController.sentBroadcast);
 router.get('/backup', auth, adminController.createBackup);

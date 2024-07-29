@@ -39,6 +39,15 @@ const readWaitRoom = async () => {
 };
 
 /**
+ * Return a list of current prompts
+ */
+const readPrompts = async () => {
+    const promptList = await db.getAllPrompts();
+    return { success: true, error: false, prompt: promptList };
+}
+
+
+/**
  * Create backup
  */
 const createBackup = async () => {
@@ -195,6 +204,7 @@ module.exports = {
     sentBroadcast,
     readChatRoom,
     readWaitRoom,
+    readPrompts,
     createBackup,
     restoreBackup,
     readStats,

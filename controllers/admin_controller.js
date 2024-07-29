@@ -37,6 +37,10 @@ const readWaitRoom = async (req, res) => {
     res.send(await Admin.readWaitRoom());
 };
 
+const readPrompts = async (req, res) => {
+    res.send(await Admin.readPrompts());
+}
+
 const readStats = async (req, res) => {
     res.send(await Admin.readStats());
 };
@@ -61,6 +65,7 @@ module.exports = {
     getAuth,
     readChatRoom,
     readWaitRoom,
+    readPrompts,
     readStats,
     createBackup,
     restoreBackup,
