@@ -211,6 +211,12 @@ const resetDatabase = async () => {
         logger.logError('mongo::resetDatabase::lastPerson', 'Failed to save data to MongoDB', err, true);
     }
 
+    try {
+        await Prompt.deleteMany({});
+    } catch (err) {
+        logger.logError('mongo::resetDatabase::prompt', 'Failed to save data to MongoDB', err, true);
+    }
+
     release();
 };
 

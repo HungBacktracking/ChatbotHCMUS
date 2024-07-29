@@ -465,6 +465,15 @@ const clear = async () => {
     } finally {
         release();
     }
+
+    release = await promptCacheMutex.acquire();
+    try {
+        promptCache.clear();
+    } catch (err) {
+        logger.logError('cache::clear::prompt', 'This should never happen', err, true);
+    } finally {
+        release();
+    }   
 };
 
 module.exports = {
