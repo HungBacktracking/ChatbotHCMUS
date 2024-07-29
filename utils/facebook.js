@@ -41,11 +41,11 @@ const persistent_menu = [
                 type: 'postback',
                 payload: lang.KEYWORD_CLUB,
             },
-            {
-                title: 'kết thúc',
-                type: 'postback',
-                payload: lang.KEYWORD_END,
-            },
+            // {
+            //     title: 'kết thúc',
+            //     type: 'postback',
+            //     payload: lang.KEYWORD_END,
+            // },
             {
                 title: 'trợ giúp',
                 type: 'postback',
@@ -63,6 +63,11 @@ const persistent_menu = [
 const quick_buttons_generic = [
     {
         content_type: 'text',
+        title: 'xem câu lạc bộ',
+        payload: lang.KEYWORD_CLUB,
+    },
+    {
+        content_type: 'text',
         title: 'meow',
         payload: lang.KEYWORD_CAT,
     },
@@ -75,11 +80,6 @@ const quick_buttons_generic = [
         content_type: 'text',
         title: 'trợ giúp',
         payload: lang.KEYWORD_HELP,
-    },
-    {
-        content_type: 'text',
-        title: 'xem câu lạc bộ',
-        payload: lang.KEYWORD_CLUB,
     },
 ];
 

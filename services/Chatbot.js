@@ -122,6 +122,7 @@ const processEvent = async (event) => {
         } else if (command === lang.KEYWORD_CLUB) {
             await chatbotUtils.forwardMessage(sender, sender2, event.message);
             await club.suggestClub(sender);
+            await club.suggestClub(sender2);
         } else {
             // FIX-ME: Only send seen indicator for messages before watermark
             if (event.read) {

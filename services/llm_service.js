@@ -37,7 +37,7 @@ const generateResponse = async (userId, message) => {
 
         const result = await chat.sendMessage(message);
         const response = result.response.text();
-        await fb.sendTextMessage('', userId, response, false);
+        await fb.sendTextButtons(userId, response, false, false, true, true, false);
 
         newChat = [
             { role: "user", parts: [{ text: message }] },
@@ -51,7 +51,7 @@ const generateResponse = async (userId, message) => {
     } catch (error) {
         logger.logError('LLM::generateResponse', 'Failed to generate AI response ', error, true);
         const response = "Sorry, I am not able to generate a response at the moment. Please try again later.";
-        await fb.sendTextMessage('', userId, response, false);
+        await fb.sendTextButtons(userId, response, false, false, true, true, false);
 
         return response;
     }

@@ -42,7 +42,7 @@ const suggestClub = async (sender) => {
         template_type: 'generic',
         elements,
     };
-    await fb.sendAttachment('', sender, 'template', payload, false, false, false);
+    await fb.sendAttachment('', sender, 'template', payload, true, false, false);
 }
 
 module.exports = {

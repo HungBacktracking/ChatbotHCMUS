@@ -16,8 +16,7 @@ const fb = require('../utils/facebook');
 const sentBroadcast = async (content) => {
     const userList = await db.getListUser();
     userList.forEach(async (entry) => {
-        console.log("User: ", entry);
-        await fb.sendTextMessage('', entry.id, content, false);
+        await fb.sendTextButtons(entry.id, content, false, false, true, false, false);
     });
     return { success: true, error: false };
 }
