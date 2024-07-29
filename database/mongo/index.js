@@ -78,7 +78,7 @@ const userWrite = async (id, gender = '', chatHistory = []) => {
                 updateFields.chatHistory = chatHistory;
             }
 
-            while (updateFields.chatHistory.length > 6) {
+            while (updateFields.chatHistory.length > 10) {
                 updateFields.chatHistory.splice(0, 2);
             }
         }

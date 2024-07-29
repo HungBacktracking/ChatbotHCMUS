@@ -307,8 +307,8 @@ const userWrite = async (id, gender = '', chatHistory = []) => {
             user.chatHistory = user.chatHistory.concat(chatHistory);
         }
 
-        // Nếu số cuộc hội thoại vượt quá 6 thì xóa 2 hội thoại đầu tiên
-        while (user.chatHistory.length > 6) {
+        // Nếu số cuộc hội thoại vượt quá 10 thì xóa 2 hội thoại đầu tiên
+        while (user.chatHistory.length > 10) {
             user.chatHistory.splice(0, 2);
         }
 
