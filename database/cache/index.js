@@ -296,7 +296,7 @@ const promptRead = async () => {
 const userWrite = async (id, gender = '', chatHistory = []) => {
     const release = await userCacheMutex.acquire();
     try {
-        const user = userCache.get(id) || { chatHistory: [] };
+        const user = userCache.get(id) || { id: id, chatHistory: [] };
 
         if (gender !== '') {
             user.gender = gender;
@@ -353,7 +353,7 @@ const userRead = async () => {
         let key = userCache.nextKey();
         while (key) {
             const user = userCache.get(key);
-            ret.push({ id: key, user });
+            ret.push(user);
             key = userCache.nextKey(key);
         }
     } catch (err) {
