@@ -46,6 +46,7 @@ const createBackup = async () => {
     const waitRoomList = await db.getListWaitRoom();
     const userList = await db.getListUser();
     const lastPersonList = await db.getListLastPerson();
+    const promptList = await db.getAllPrompts();
 
     return {
         success: true,
@@ -54,6 +55,7 @@ const createBackup = async () => {
         waitRoom: waitRoomList,
         user: userList,
         lastPerson: lastPersonList,
+        prompt: promptList,
     };
 };
 
@@ -78,6 +80,10 @@ const restoreBackup = async (data) => {
         return { success: false, error: true, errorType: 'Invalid last person data' };
     }
 
+    if (!Array.isArray(data.prompt)) {
+        return { success: false, error: true, errorType: 'Invalid prompt data' };
+    }
+
     await db.resetDatabase();
 
     data.chatRoom.forEach(async (entry) => {
@@ -94,6 +100,10 @@ const restoreBackup = async (data) => {
 
     data.lastPerson.forEach(async (entry) => {
         await db.updateLastPerson(entry.id1, entry.id2);
+    });
+
+    data.prompt.forEach(async (entry) => {
+        await db.setPrompt(entry.mode, entry.content);
     });
 
     return { success: true, error: false };
