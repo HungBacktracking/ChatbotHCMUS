@@ -17,10 +17,10 @@ const editChatRoom = async (req, res) => {
     res.send(ret);
 };
 
-const editPrompts = async (req, res) => {
+const editPrompt = async (req, res) => {
     const data = req.body;
     let ret = { success: false, error: true };
-    ret = await Admin.addPrompt(data.prompt);
+    ret = await Admin.setPrompt(data.prompt);
     // if (data.type === 'add') {
     //     ret = await Admin.addPrompt(data.prompt);
     // } else if (data.type === 'remove') {
@@ -78,7 +78,7 @@ module.exports = {
     readChatRoom,
     readWaitRoom,
     readPrompts,
-    editPrompts,
+    editPrompt,
     readStats,
     createBackup,
     restoreBackup,

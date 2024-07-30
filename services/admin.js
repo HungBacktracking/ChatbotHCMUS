@@ -24,7 +24,7 @@ const sentBroadcast = async (content) => {
 /**
  * Save prompt to database
  */
-const addPrompt = async (prompt) => {
+const setPrompt = async (prompt) => {
     await db.setPrompt(prompt.mode, prompt.content);
     return { success: true, error: false };
 };
@@ -214,7 +214,7 @@ module.exports = {
     readChatRoom,
     readWaitRoom,
     readPrompts,
-    addPrompt,
+    setPrompt,
     createBackup,
     restoreBackup,
     readStats,
