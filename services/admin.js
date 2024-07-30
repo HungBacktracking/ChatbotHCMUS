@@ -21,6 +21,15 @@ const sentBroadcast = async (content) => {
     return { success: true, error: false };
 }
 
+/**
+ * Save prompt to database
+ */
+const addPrompt = async (prompt) => {
+    await db.setPrompt(prompt.mode, prompt.content);
+    return { success: true, error: false };
+};
+
+
 
 /**
  * Return a list of current users in chat room
@@ -205,6 +214,7 @@ module.exports = {
     readChatRoom,
     readWaitRoom,
     readPrompts,
+    addPrompt,
     createBackup,
     restoreBackup,
     readStats,

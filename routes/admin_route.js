@@ -4,6 +4,7 @@ const auth = require('../middleware/auth');
 const adminController = require('../controllers/admin_controller');
 
 router.post('/edit/chatroom', auth, adminController.editChatRoom);
+router.post('/edit/prompt', auth, adminController.editPrompt);
 router.post('/db/reset', auth, adminController.resetDatabase);
 router.post('/userinfo', auth, adminController.getUserData);
 router.get('/auth', auth, adminController.getAuth);

@@ -17,6 +17,18 @@ const editChatRoom = async (req, res) => {
     res.send(ret);
 };
 
+const editPrompts = async (req, res) => {
+    const data = req.body;
+    let ret = { success: false, error: true };
+    ret = await Admin.addPrompt(data.prompt);
+    // if (data.type === 'add') {
+    //     ret = await Admin.addPrompt(data.prompt);
+    // } else if (data.type === 'remove') {
+    //     ret = await Admin.removePrompt(data.prompt);
+    // }
+    res.send(ret);
+}
+
 const resetDatabase = async (req, res) => {
     res.send(await Admin.resetDatabase());
 };
@@ -66,6 +78,7 @@ module.exports = {
     readChatRoom,
     readWaitRoom,
     readPrompts,
+    editPrompts,
     readStats,
     createBackup,
     restoreBackup,
