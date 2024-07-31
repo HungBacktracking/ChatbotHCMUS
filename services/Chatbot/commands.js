@@ -5,6 +5,7 @@ const chatbotUtils = require('../../utils/ChatbotUtils');
 const gifts = require('../../utils/gifts');
 const club = require('../../utils/club');
 const LLM = require('../../services/llm_service');
+const GenderEnum = require('../../database/models/GenderEnum');
 
 
 
