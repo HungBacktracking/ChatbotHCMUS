@@ -28,7 +28,7 @@ const processEvent = async (event) => {
         await fb.sendTextMessage('', sender, lang.ERR_UNKNOWN, false);
         return;
     }
-
+    console.log('Event', event);
     await strategy.handle(event);
 };
 
