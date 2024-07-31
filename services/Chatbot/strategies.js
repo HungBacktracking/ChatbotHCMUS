@@ -18,7 +18,7 @@ class NotInRoomStrategy extends Strategy {
             await new LLMCommand().execute(event);
             return;
         }
-        command.execute(event);
+        command.execute(event, false, false);
     }
 }
 
@@ -34,7 +34,7 @@ class InWaitRoomStrategy extends Strategy {
             return;
         }
 
-        command.execute(event, isInWaitRoom = true);
+        command.execute(event, true, false);
     }
 }
 
@@ -46,7 +46,7 @@ class InChatRoomStrategy extends Strategy {
             return;
         }
 
-        command.execute(event, isInChatRoom = true);
+        command.execute(event, false, true);
     }
 }
 
