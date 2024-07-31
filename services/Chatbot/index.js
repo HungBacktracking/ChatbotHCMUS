@@ -1,16 +1,36 @@
 const { NotInRoomStrategy, InWaitRoomStrategy, InChatRoomStrategy } = require('./strategies');
 const db = require('../../database');
 const fb = require('../../utils/facebook');
+const config = require('../../config');
 const lang = require('../../lang');
 
 
 const processEvent = async (event) => {
     
-    if (event.read || event.delivery || !event.hasOwnProperty('message') || event.message.is_echo === true) {
+    if (event.read) {
+        event.message = { text: '' };
+    }
+  
+    if (event.postback && event.postback.payload) {
+        event.message = { text: event.postback.payload };
+    }
+  
+    if (!event.hasOwnProperty('message') || event.delivery) {
+        return;
+    }
+  
+    if (event.message.is_echo === true) {
+        return;
+    }
+  
+
+    const sender = event.sender.id;
+
+    if (config.MAINTENANCE) {
+        await fb.sendTextMessage('', sender, lang.MAINTENANCE, false);
         return;
     }
 
-    const sender = event.sender.id;
     const sender2 = await db.findPartnerChatRoom(sender);
     const waitState = await db.isInWaitRoom(sender);
 
@@ -28,7 +48,7 @@ const processEvent = async (event) => {
         await fb.sendTextMessage('', sender, lang.ERR_UNKNOWN, false);
         return;
     }
-    console.log('Event', event);
+
     await strategy.handle(event);
 };
 

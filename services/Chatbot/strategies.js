@@ -1,10 +1,5 @@
 const lang = require('../../lang');
-const db = require('../../database');
-const fb = require('../../utils/facebook');
-const chatbotUtils = require('../../utils/ChatbotUtils');
-
-const { StartCommand, HelpCommand, CatCommand, DogCommand, ClubCommand, ChatCommand } = require('./commands');
-
+const { StartCommand, EndCommand, HelpCommand, CatCommand, DogCommand, ClubCommand, GenderCommand, LLMCommand, GreetingCommand, CommonChatCommand } = require('./commands');
 
 
 class Strategy {
@@ -14,85 +9,81 @@ class Strategy {
 
 class NotInRoomStrategy extends Strategy {
     async handle(event) {
-        const command = event.message.text.toLowerCase();
-        switch (command) {
-        case lang.KEYWORD_START:
-            await new StartCommand().execute(event);
-            break;
-        case lang.KEYWORD_HELP:
-            await new HelpCommand().execute(event);
-            break;
-        case lang.KEYWORD_CAT:
-            await new CatCommand().execute(event);
-            break;
-        case lang.KEYWORD_DOG:
-            await new DogCommand().execute(event);
-            break;
-        case lang.KEYWORD_CLUB:
-            await new ClubCommand().execute(event);
-            break;
-        default:
-            await new ChatCommand().execute(event);
+        const command = getCommand(event);
+
+        if (command instanceof EndCommand) {
+            await new LLMCommand().execute(event);
+            return;
+        } else if (command instanceof CommonChatCommand) {
+            await new LLMCommand().execute(event);
+            return;
         }
+        command.execute(event);
     }
 }
 
 class InWaitRoomStrategy extends Strategy {
     async handle(event) {
-        const sender = event.sender.id;
-        const command = event.message.text.toLowerCase();
-        switch (command) {
-        case lang.KEYWORD_END:
-            await db.removeFromWaitRoom(sender);
-            await fb.sendTextButtons(sender, lang.END_CHAT, true, false, true, true, false);
-            break;
-        case lang.KEYWORD_HELP:
-            await new HelpCommand().execute(event);
-            break;
-        case lang.KEYWORD_CAT:
-            await new CatCommand().execute(event);
-            break;
-        case lang.KEYWORD_DOG:
-            await new DogCommand().execute(event);
-            break;
-        case lang.KEYWORD_CLUB:
-            await new ClubCommand().execute(event);
-            break;
-        default:
-            await new ChatCommand().execute(event);
+        const command = getCommand(event);
+        if (command instanceof StartCommand || command instanceof GenderCommand) {
+            await new LLMCommand().execute(event);
+            return;
         }
+        else if (command instanceof CommonChatCommand) {
+            await new LLMCommand().execute(event);
+            return;
+        }
+
+        command.execute(event, isWaitRoom = true);
     }
 }
 
 class InChatRoomStrategy extends Strategy {
     async handle(event) {
-        const sender = event.sender.id;
-        const sender2 = await db.findPartnerChatRoom(sender);
-        const command = event.message.text.toLowerCase();
-
-        switch (command) {
-        case lang.KEYWORD_END:
-            await chatbotUtils.processEndChat(sender, sender2);
-            break;
-        case lang.KEYWORD_HELP:
-            await new HelpCommand().execute(event);
-            break;
-        case lang.KEYWORD_CAT:
-            await chatbotUtils.forwardMessage(sender, sender2, event.message);
-            await new CatCommand().execute(event);
-            break;
-        case lang.KEYWORD_DOG:
-            await chatbotUtils.forwardMessage(sender, sender2, event.message);
-            await new DogCommand().execute(event);
-            break;
-        case lang.KEYWORD_CLUB:
-            await chatbotUtils.forwardMessage(sender, sender2, event.message);
-            await new ClubCommand().execute(event);
-            break;
-        default:
-            await chatbotUtils.forwardMessage(sender, sender2, event.message);
+        const command = getCommand(event);
+        if (command instanceof StartCommand || command instanceof GenderCommand) {
+            await new CommonChatCommand().execute(event);
+            return;
         }
+
+        command.execute(event, isInChatRoom = true);
     }
 }
+
+
+
+const getCommand = (event) => {
+    let text = '';
+    if (event.message.quick_reply && event.message.quick_reply.payload) {
+        text = event.message.quick_reply.payload;
+    } else if (event.message.text) {
+        text = event.message.text;
+    }
+
+    text = text.toLowerCase();
+    if (text === 'ʬ') {
+        return new GreetingCommand();
+    } else if (text === lang.KEYWORD_START) {
+        return new StartCommand();
+    } else if (text === lang.KEYWORD_END) {
+        return new EndCommand();
+    } else if (text === lang.KEYWORD_HELP) {
+        return new HelpCommand();
+    } else if (text === lang.KEYWORD_CAT) {
+        return new CatCommand();
+    } else if (text === lang.KEYWORD_DOG) {
+        return new DogCommand();
+    } else if (text === lang.KEYWORD_CLUB) {
+        return new ClubCommand();
+    } else if (command.startsWith(lang.KEYWORD_GENDER)) {
+        return new GenderCommand();
+    }
+    else {
+        return new CommonChatCommand();
+    }
+
+}
+
+
 
 module.exports = { NotInRoomStrategy, InWaitRoomStrategy, InChatRoomStrategy };
