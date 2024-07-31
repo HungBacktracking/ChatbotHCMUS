@@ -103,7 +103,10 @@ class LLMCommand extends Command {
     async execute(event, isInWaitRoom, isInChatRoom) {
         const sender = event.sender.id;
         const text = getText(event);
-        await LLM.generateResponse(sender, text);
+
+        if (!event.read) {
+            await LLM.generateResponse(sender, text);
+        }
     }
 }
 
