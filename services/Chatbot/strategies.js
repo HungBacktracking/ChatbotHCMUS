@@ -34,7 +34,7 @@ class InWaitRoomStrategy extends Strategy {
             return;
         }
 
-        command.execute(event, isWaitRoom = true);
+        command.execute(event, isInWaitRoom = true);
     }
 }
 
