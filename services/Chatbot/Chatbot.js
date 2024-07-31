@@ -1,5 +1,8 @@
 const { NotInRoomStrategy, InWaitRoomStrategy, InChatRoomStrategy } = require('./strategies');
 const db = require('../../database');
+const fb = require('../../utils/facebook');
+const lang = require('../../lang');
+
 
 const processEvent = async (event) => {
     

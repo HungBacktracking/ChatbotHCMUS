@@ -1,3 +1,8 @@
+const lang = require('../../lang');
+const db = require('../../database');
+const fb = require('../../utils/facebook');
+const chatbotUtils = require('../../utils/ChatbotUtils');
+
 const { StartCommand, HelpCommand, CatCommand, DogCommand, ClubCommand, ChatCommand } = require('./commands');
 
 

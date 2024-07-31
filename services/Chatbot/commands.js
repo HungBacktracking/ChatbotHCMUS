@@ -6,7 +6,6 @@ const gifts = require('../../utils/gifts');
 const club = require('../../utils/club');
 const LLM = require('../../services/llm_service');
 
-
 class Command {
     execute(event) {}
 }
