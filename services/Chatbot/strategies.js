@@ -75,7 +75,7 @@ const getCommand = (event) => {
         return new DogCommand();
     } else if (text === lang.KEYWORD_CLUB) {
         return new ClubCommand();
-    } else if (command.startsWith(lang.KEYWORD_GENDER)) {
+    } else if (text.startsWith(lang.KEYWORD_GENDER)) {
         return new GenderCommand();
     }
     else {
